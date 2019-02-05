@@ -65,8 +65,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b26653afb76acc4c80fe40b49c335a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  netID: 3f504d2c8548c946a2fb0cc79ac73992
-  registryId: 10
+  netID: f680e7c7e4039a4a9957771d2ec164b2
+  registryId: 4
 --- !u!114 &3582152881772207947
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -103,6 +103,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f08812f3dcab18c4492eee34ebc2f9dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SerializedData:
+    tick: 0
+    position: {x: 0, y: 0, z: 0}
+    velocity: {x: 0, y: 0, z: 0}
+    locoState: 0
+    locoStartTick: 0
+    action: 0
+    actionStartTick: 0
+    jumpCount: 0
+    sprinting: 0
+    cameraProfile: 0
+    damageTick: 0
+    damageDirection: {x: 0, y: 0, z: 0}
+    damageImpulse: 0
 --- !u!114 &7339034719779384493
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -147,6 +161,12 @@ MonoBehaviour:
     footIkOffset: {x: 0, y: 0}
     footIkNormalLeft: {x: 0, y: 0, z: 0}
     footIkNormaRight: {x: 0, y: 0, z: 0}
+    rightControllerPos: {x: 0, y: 0, z: 0}
+    leftControllerPos: {x: 0, y: 0, z: 0}
+    headsetPos: {x: 0, y: 0, z: 0}
+    rightControllerRot: {x: 0, y: 0, z: 0, w: 0}
+    leftControllerRot: {x: 0, y: 0, z: 0, w: 0}
+    headsetRot: {x: 0, y: 0, z: 0, w: 0}
 --- !u!114 &4416458674605058407
 MonoBehaviour:
   m_ObjectHideFlags: 0

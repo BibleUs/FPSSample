@@ -343,6 +343,7 @@ public class GameWorld
     World m_ECSWorld;
 
     GameObject m_sceneRoot;
+    private GameObject m_LocalPlayerRoot;
 
     DestroyDespawning m_destroyDespawningSystem;
 

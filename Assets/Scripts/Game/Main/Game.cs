@@ -169,7 +169,7 @@ public class Game : MonoBehaviour
     [ConfigVar(Name = "server.tickrate", DefaultValue = "60", Description = "Tickrate for server", Flags = ConfigVar.Flags.ServerInfo)]
     public static ConfigVar serverTickRate;
 
-    [ConfigVar(Name = "config.fov", DefaultValue = "60", Description = "Field of view", Flags = ConfigVar.Flags.Save)]
+    [ConfigVar(Name = "config.fov", DefaultValue = "111", Description = "Field of view", Flags = ConfigVar.Flags.Save)]
     public static ConfigVar configFov;
 
     [ConfigVar(Name = "config.mousesensitivity", DefaultValue = "1.5", Description = "Mouse sensitivity", Flags = ConfigVar.Flags.Save)]
@@ -326,8 +326,8 @@ public class Game : MonoBehaviour
             var hdpipe = RenderPipelineManager.currentPipeline as HDRenderPipeline;
             if (hdpipe != null)
             {
-                hdpipe.DebugLayer2DCallback = DebugOverlay.Render;
-                hdpipe.DebugLayer3DCallback = DebugOverlay.Render3D;
+//                hdpipe.DebugLayer2DCallback = DebugOverlay.Render;
+//                hdpipe.DebugLayer3DCallback = DebugOverlay.Render3D;
             }
 
             m_GameStatistics = new GameStatistics();
@@ -406,6 +406,7 @@ public class Game : MonoBehaviour
 
         inputSystem = new InputSystem();
         GameDebug.Log("InputSystem initialized");
+        inputSystem.SetVRInput();
 
         // TODO (petera) added Instantiate here to avoid making changes to asset file.
         // Feels like maybe SO is not really the right tool here.
@@ -503,8 +504,8 @@ public class Game : MonoBehaviour
             var hdpipe = RenderPipelineManager.currentPipeline as HDRenderPipeline;
             if (hdpipe != null)
             {
-                hdpipe.DebugLayer2DCallback = DebugOverlay.Render;
-                hdpipe.DebugLayer3DCallback = DebugOverlay.Render3D;
+//                hdpipe.DebugLayer2DCallback = DebugOverlay.Render;
+//                hdpipe.DebugLayer3DCallback = DebugOverlay.Render3D;
 
                 var layer = LayerMask.NameToLayer("PostProcess Volumes");
                 if (layer == -1)

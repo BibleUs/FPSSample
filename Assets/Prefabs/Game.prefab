@@ -181,7 +181,7 @@ Camera:
   m_RenderingPath: 1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
-  m_TargetEye: 3
+  m_TargetEye: 0
   m_HDR: 0
   m_AllowMSAA: 0
   m_AllowDynamicResolution: 0
@@ -228,7 +228,7 @@ MonoBehaviour:
     enableLightLayers: 1
     diffuseGlobalDimmer: 1
     specularGlobalDimmer: 1
-    enableForwardRenderingOnly: 0
+    shaderLitMode: 1
     enableDepthPrepassWithDeferredRendering: 0
     enableTransparentPrepass: 1
     enableMotionVectors: 1
@@ -238,17 +238,14 @@ MonoBehaviour:
     enableTransparentPostpass: 1
     enableDistortion: 1
     enablePostprocess: 1
-    enableStereo: 1
-    xrGraphicsConfig:
-      renderScale: 1
-      viewportScale: 1
-      useOcclusionMesh: 1
-      occlusionMeshScale: 1
-    enableAsyncCompute: 1
     enableOpaqueObjects: 1
     enableTransparentObjects: 1
     enableRealtimePlanarReflection: 1
     enableMSAA: 0
+    enableAsyncCompute: 1
+    runLightListAsync: 1
+    runSSRAsync: 1
+    runSSAOAsync: 1
     lightLoopSettings:
       overrides: 0
       enableTileAndCluster: 1
@@ -322,8 +319,12 @@ MonoBehaviour:
   m_ShowToolkit: 0
   m_ShowCustomSorter: 0
   breakBeforeColorGrading: 0
-  m_BeforeTransparentBundles: []
-  m_BeforeStackBundles: []
+  m_BeforeTransparentBundles:
+  - assemblyQualifiedName: InvertOpaque, LWGraphicsTests, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  m_BeforeStackBundles:
+  - assemblyQualifiedName: HalfToneOpaque, LWGraphicsTests, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
   m_AfterStackBundles: []
 --- !u!1 &1573906733081610
 GameObject:
@@ -335,6 +336,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4496992773002774}
   - component: {fileID: 114884037441297484}
+  - component: {fileID: 195465706525388565}
   m_Layer: 0
   m_Name: Game
   m_TagString: Untagged
@@ -380,6 +382,21 @@ MonoBehaviour:
   defaultBank: {fileID: 11400000, guid: 4e9db283fb7cecb4bb999325034c7c63, type: 2}
   bootCamera: {fileID: 20780552474701210}
   clientFrontend: {fileID: 0}
+--- !u!114 &195465706525388565
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1573906733081610}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1aaa8a3afb932fe478757c1e89cf0cd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  initializeSteamVROnAwake: 1
+  doNotDestroy: 1
+  steamvr_render: {fileID: 0}
 --- !u!1 &1625622626952942
 GameObject:
   m_ObjectHideFlags: 0
@@ -522,7 +539,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Texture: {fileID: 2800000, guid: ec3bf67780c0bdc4dbb5bf26987204d5, type: 3}
   m_UVRect:
     serializedVersion: 2

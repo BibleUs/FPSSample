@@ -37,6 +37,7 @@ public class RobotWeaponA : MonoBehaviour
     
     public SoundDef meleeImpactSound;
     public ParticleSystem meleeImpactEffect;
+    public Transform muzzle;
 }
 
 

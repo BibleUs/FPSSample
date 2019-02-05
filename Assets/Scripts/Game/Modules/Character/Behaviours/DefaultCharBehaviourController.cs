@@ -168,7 +168,7 @@ class DefaultBehaviourController_Update : BaseComponentDataSystem<CharBehaviour,
         ExtraComponentRequirements = new ComponentType[] { typeof(ServerEntity) } ;
     }
 	
-    protected override void Update(Entity entity, CharBehaviour charBehavior, DefaultCharBehaviourController.InternalState internalState, DefaultCharBehaviourController.PredictedState predictedState)
+    protected override void Update(Entity entity, CharBehaviour charBehavior, DefaultCharBehaviourController.InternalState internalState, DefaultCharBehaviourController.PredictedState settings)
     {
         if (internalState.initialized == 0)
         {
@@ -180,60 +180,60 @@ class DefaultBehaviourController_Update : BaseComponentDataSystem<CharBehaviour,
         var command = EntityManager.GetComponentObject<UserCommandComponent>(charBehavior.character).command;
 
         var healthState = EntityManager.GetComponentObject<HealthState>(charBehavior.character);
-        if (healthState.health <= 0 && predictedState.dead == 0)
+        if (healthState.health <= 0 && settings.dead == 0)
         {
-            if(predictedState.activeAbility != DefaultCharBehaviourController.Ability.None)
+            if(settings.activeAbility != DefaultCharBehaviourController.Ability.None)
             {
-                var behavior = internalState.GetAbilityBehavior(predictedState.activeAbility);
+                var behavior = internalState.GetAbilityBehavior(settings.activeAbility);
                 Deactivate(behavior);
             }
             Deactivate(internalState.abilityMovement);
             Activate(internalState.abilityDead);
 
-            predictedState.dead = 1;
-            EntityManager.SetComponentData(entity, predictedState);
+            settings.dead = 1;
+            EntityManager.SetComponentData(entity, settings);
         }
 
-        if (predictedState.dead == 1)
+        if (settings.dead == 1)
             return;
         
         // Check for abilities done
-        if (predictedState.activeAbility != DefaultCharBehaviourController.Ability.None)
+        if (settings.activeAbility != DefaultCharBehaviourController.Ability.None)
         {
-            var activeBehavior = internalState.GetAbilityBehavior(predictedState.activeAbility);
+            var activeBehavior = internalState.GetAbilityBehavior(settings.activeAbility);
             var abilityCtrl = EntityManager.GetComponentData<AbilityControl>(activeBehavior);
             if (abilityCtrl.behaviorState != AbilityControl.State.Active)
             {
 //                GameDebug.Log("Behavior done:" + activeBehavior);
                 Deactivate(activeBehavior);
-                predictedState.activeAbility = DefaultCharBehaviourController.Ability.None;
+                settings.activeAbility = DefaultCharBehaviourController.Ability.None;
             }
         }
         
         if (IsRequestingActive(ref internalState, DefaultCharBehaviourController.Ability.PrimFire))
         {
-            AttempActivate(ref internalState, ref predictedState, DefaultCharBehaviourController.Ability.PrimFire, false);
+            AttempActivate(ref internalState, ref settings, DefaultCharBehaviourController.Ability.PrimFire, false);
         }
         else if (command.secondaryFire)
         {
-            AttempActivate(ref internalState, ref predictedState, DefaultCharBehaviourController.Ability.SecFire, false);
+            AttempActivate(ref internalState, ref settings, DefaultCharBehaviourController.Ability.SecFire, false);
         }
         else if (command.melee)
         {
-            var force = predictedState.activeAbility == DefaultCharBehaviourController.Ability.Sprint;
-            AttempActivate(ref internalState, ref predictedState, DefaultCharBehaviourController.Ability.Melee, force);
+            var force = settings.activeAbility == DefaultCharBehaviourController.Ability.Sprint;
+            AttempActivate(ref internalState, ref settings, DefaultCharBehaviourController.Ability.Melee, force);
         }
         else if (command.sprint)
         {
-            AttempActivate(ref internalState, ref predictedState, DefaultCharBehaviourController.Ability.Sprint, false);
+            AttempActivate(ref internalState, ref settings, DefaultCharBehaviourController.Ability.Sprint, false);
         }
         else if (command.emote != CharacterEmote.None)
         {
             if(command.moveMagnitude == 0)
-                AttempActivate(ref internalState, ref predictedState, DefaultCharBehaviourController.Ability.Emote, false);
+                AttempActivate(ref internalState, ref settings, DefaultCharBehaviourController.Ability.Emote, false);
         }
         
-        EntityManager.SetComponentData(entity, predictedState);
+        EntityManager.SetComponentData(entity, settings);
 
 
         if(DefaultCharBehaviourController.ShowInfo.IntValue > 0)
@@ -241,8 +241,8 @@ class DefaultBehaviourController_Update : BaseComponentDataSystem<CharBehaviour,
             int x = 1;
             int y = 2;
             DebugOverlay.Write(x, y++, "Ability controller");
-            DebugOverlay.Write(x, y++, "  Active ability:" + predictedState.activeAbility);
-            DebugOverlay.Write(x, y++, "  dead:" + predictedState.dead);
+            DebugOverlay.Write(x, y++, "  Active ability:" + settings.activeAbility);
+            DebugOverlay.Write(x, y++, "  dead:" + settings.dead);
         }
     }
 

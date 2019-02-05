@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.XR;
 
 [CreateAssetMenu(fileName = "Ability_GrenadeLauncher",menuName = "FPS Sample/Abilities/Ability_GrenadeLauncher")]
 public class Ability_GrenadeLauncher : CharBehaviorFactory
@@ -127,7 +128,7 @@ class GrenadeLauncher_Update : BaseComponentDataSystem<AbilityControl,Ability_Gr
         ExtraComponentRequirements = new ComponentType[] { typeof(ServerEntity) } ;
     }
     
-    protected override void Update(Entity entity, AbilityControl abilityCtrl, Ability_GrenadeLauncher.PredictedState predictedState, Ability_GrenadeLauncher.Settings state)
+    protected override void Update(Entity entity, AbilityControl abilityCtrl, Ability_GrenadeLauncher.PredictedState predictedState, Ability_GrenadeLauncher.Settings settings)
     {
         var time = m_world.worldTime;
         
@@ -144,7 +145,7 @@ class GrenadeLauncher_Update : BaseComponentDataSystem<AbilityControl,Ability_Gr
                     
                     predictedState.SetPhase(Ability_GrenadeLauncher.Phase.Active, time.tick);
 
-                    charPredictedState.SetAction(state.fireAction, time.tick);
+                    charPredictedState.SetAction(settings.fireAction, time.tick);
 
                     // Only spawn once for each tick (so it does not fire again when re-predicting)
                     var localState = EntityManager.GetComponentData<Ability_GrenadeLauncher.LocalState>(entity);
@@ -162,14 +163,28 @@ class GrenadeLauncher_Update : BaseComponentDataSystem<AbilityControl,Ability_Gr
                         var startDir = command.lookDir;
                         var right = math.cross(new float3(0, 1, 0),startDir);
                         var pitchRot = quaternion.AxisAngle(right,
-                            -math.radians(state.grenadePitchAngle));
+                            -math.radians(settings.grenadePitchAngle));
                         startDir = math.mul(pitchRot, startDir);
                             
-                        var velocity = startDir*state.grenadeVelocity;
+                        var velocity = startDir*settings.grenadeVelocity;
+                        
+                        if (XRSettings.enabled) {
+                            var muzzle = character.presentations[1].GetComponent<RobotWeaponA>().muzzle;
+                            eyePos = muzzle.transform.position;
+                            startDir = muzzle.transform.forward;
+                            right = math.cross(new float3(0, 1, 0),startDir);
+                            pitchRot = quaternion.AxisAngle(right,
+                                -math.radians(settings.grenadePitchAngle));
+                            startDir = math.mul(pitchRot, startDir);
+                            
+                            velocity = startDir*settings.grenadeVelocity;
+                            Debug.Log($"shot from GLauncher, char is {character.name}. Eye Pos is {eyePos} and direction is {velocity}");
+                        }
+                        
 
                         unsafe
                         {
-                            GrenadeSpawnRequest.Create(PostUpdateCommands, state.grenadePrefabGUID, eyePos,
+                            GrenadeSpawnRequest.Create(PostUpdateCommands, settings.grenadePrefabGUID, eyePos,
                                 velocity, charAbility.character, character.teamId);
                         }
 
@@ -185,7 +200,7 @@ class GrenadeLauncher_Update : BaseComponentDataSystem<AbilityControl,Ability_Gr
             case Ability_GrenadeLauncher.Phase.Active:
             {
                 var phaseDuration = time.DurationSinceTick(predictedState.phaseStartTick);
-                if (phaseDuration > state.activationDuration)
+                if (phaseDuration > settings.activationDuration)
                 {
                     var charAbility = EntityManager.GetComponentData<CharBehaviour>(entity);
                     var charPredictedState = EntityManager.GetComponentData<CharPredictedStateData>(charAbility.character);
@@ -205,7 +220,7 @@ class GrenadeLauncher_Update : BaseComponentDataSystem<AbilityControl,Ability_Gr
             case Ability_GrenadeLauncher.Phase.Cooldown:
             {
                 var phaseDuration = time.DurationSinceTick(predictedState.phaseStartTick);
-                if (phaseDuration > state.cooldownDuration)
+                if (phaseDuration > settings.cooldownDuration)
                 {
                     abilityCtrl.behaviorState = AbilityControl.State.Idle;
 

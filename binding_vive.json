@@ -1,0 +1,32 @@
+{
+   "alias_info" : {},
+   "bindings" : {
+      "/actions/default" : {
+         "chords" : [],
+         "haptics" : [],
+         "poses" : [
+			{
+				"path": "/user/head/pose/raw",
+				"output": "/actions/default/in/pose"
+			}
+		 ],
+         "skeleton" : [],
+         "sources" : [
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/default/in/headsetonhead"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/head/proximity"
+            }
+         ]
+      }
+   },
+   "controller_type" : "vive",
+   "description" : "",
+   "name" : "vive defaults",
+   "options" : {},
+   "simulated_actions" : []
+}

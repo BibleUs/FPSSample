@@ -31,15 +31,15 @@ class Dead_Update : BaseComponentDataSystem<CharBehaviour, AbilityControl, CharB
     }
 
     protected override void Update(Entity abilityEntity, CharBehaviour charAbility, AbilityControl abilityCtrl, 
-        CharBehavior_Dead.InternalState internalState)
+        CharBehavior_Dead.InternalState settings)
     {
         if (abilityCtrl.active == 0)
             return;
 
-        if (internalState.active != -1)
+        if (settings.active != -1)
         {
-            internalState.active = 1;
-            EntityManager.SetComponentData(abilityEntity,internalState);
+            settings.active = 1;
+            EntityManager.SetComponentData(abilityEntity,settings);
 
             var charPredictedState = EntityManager.GetComponentData<CharPredictedStateData>(charAbility.character);
             charPredictedState.cameraProfile = CameraProfile.ThirdPerson;

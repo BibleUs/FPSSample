@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
+using UnityEngine.XR;
 
 [CreateAssetMenu(fileName = "Ability_ProjectileLauncher",menuName = "FPS Sample/Abilities/Ability_ProjectileLauncher")]
 public class Ability_ProjectileLauncher : CharBehaviorFactory
@@ -96,7 +97,7 @@ class ProjectileLauncher_Update : BaseComponentDataSystem<AbilityControl,Ability
         ExtraComponentRequirements = new ComponentType[] { typeof(ServerEntity) } ;
     }
 
-    protected override void Update(Entity entity, AbilityControl abilityCtrl, Ability_ProjectileLauncher.PredictedState predictedState, Ability_ProjectileLauncher.Settings state)
+    protected override void Update(Entity entity, AbilityControl abilityCtrl, Ability_ProjectileLauncher.PredictedState predictedState, Ability_ProjectileLauncher.Settings settings)
     {
         var time = m_world.worldTime;
         switch (abilityCtrl.behaviorState)
@@ -112,7 +113,7 @@ class ProjectileLauncher_Update : BaseComponentDataSystem<AbilityControl,Ability
                     predictedState.activeTick = time.tick;
                     
 //                    GameDebug.Log("Ability_ProjectileLauncher SetAction:" + state.fireAction + " tick:" + time.tick);
-                    charPredictedState.SetAction(state.fireAction, time.tick);
+                    charPredictedState.SetAction(settings.fireAction, time.tick);
 
                     // Only spawn once for each tick (so it does not fire again when re-predicting)
                     var localState = EntityManager.GetComponentData<Ability_ProjectileLauncher.LocalState>(entity);
@@ -126,9 +127,18 @@ class ProjectileLauncher_Update : BaseComponentDataSystem<AbilityControl,Ability
                         var command = EntityManager.GetComponentObject<UserCommandComponent>(charAbility.character)
                             .command;
                         
-                        var endPos = eyePos + command.lookDir * state.projectileRange;
+                        var endPos = eyePos + command.lookDir * settings.projectileRange;
+                        
+                        if (XRSettings.enabled) {
+                            var muzzle = character.presentations[1].GetComponent<TerraformerWeaponA>().muzzle;
+                            eyePos = muzzle.transform.position;
+                            endPos = eyePos + muzzle.transform.forward * settings.projectileRange;
+                            Debug.Log($"shot from PLauncher, char is {character.name}. Eye Pos is {eyePos} and direction is {endPos}");
+                        }
+                        
+                        
                         ProjectileRequest.Create(PostUpdateCommands, time.tick, time.tick - command.renderTick,
-                            state.projectileRegistryId, charAbility.character, character.teamId, eyePos, endPos);
+                            settings.projectileRegistryId, charAbility.character, character.teamId, eyePos, endPos);
 
                         interpolatedState.fireTick = time.tick;
                         EntityManager.SetComponentData(entity, interpolatedState);
@@ -142,7 +152,7 @@ class ProjectileLauncher_Update : BaseComponentDataSystem<AbilityControl,Ability
             case AbilityControl.State.Active:
             {
                 var phaseDuration = time.DurationSinceTick(predictedState.activeTick);
-                if (phaseDuration > state.activationDuration)
+                if (phaseDuration > settings.activationDuration)
                 {
                     var charAbility = EntityManager.GetComponentData<CharBehaviour>(entity);
                     var charPredictedState = EntityManager.GetComponentData<CharPredictedStateData>(charAbility.character);
@@ -160,7 +170,7 @@ class ProjectileLauncher_Update : BaseComponentDataSystem<AbilityControl,Ability
             case AbilityControl.State.Cooldown:
             {
                 var phaseDuration = time.DurationSinceTick(predictedState.activeTick);
-                if (phaseDuration > state.cooldownDuration)
+                if (phaseDuration > settings.cooldownDuration)
                 {
                     abilityCtrl.behaviorState = AbilityControl.State.Idle;
                     EntityManager.SetComponentData(entity, abilityCtrl);

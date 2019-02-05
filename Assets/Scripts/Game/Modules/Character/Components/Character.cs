@@ -12,8 +12,10 @@ public class Character : MonoBehaviour, INetSerialized
     [NonSerialized] public HealthState healthState;
     [NonSerialized] public int heroTypeIndex;
     [NonSerialized] public HeroTypeAsset heroTypeData;
-    [NonSerialized] public Entity presentation;    // Main char presentation used updating animation state 
+    [NonSerialized] public Entity presentation;    // Main char presentation used updating animation state
+    [NonSerialized] public Entity presentationVR;    // Main char VR presentation used updating animation state 
     [NonSerialized] public List<CharPresentation> presentations = new List<CharPresentation>();
+    [NonSerialized] public List<CharPresentation> presentationsVR = new List<CharPresentation>();
     
     [NonSerialized] public Entity behaviourController;
     [NonSerialized] public Entity item;    // TODO (mogensh) temp until we get multiple weapon handling

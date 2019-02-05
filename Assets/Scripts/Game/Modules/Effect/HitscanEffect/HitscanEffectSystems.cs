@@ -22,14 +22,18 @@ public class HandleHitscanEffectRequests : BaseComponentSystem
 			var prefab = resource as GameObject;
 			GameDebug.Assert(prefab != null);
 			
+			var Poolparent = m_world.Spawn($"Pool_{prefab.name}");
+			
 			var pool = new Pool();
 			pool.instances = new HitscanEffect[entry.poolSize];
 			for (var j = 0; j < pool.instances.Length; j++)
 			{
 				var go = GameObject.Instantiate(prefab);
             
-				if(systemRoot != null)
-					go.transform.SetParent(systemRoot.transform, false);
+//				if(systemRoot != null)
+//					go.transform.SetParent(systemRoot.transform, false);
+				go.transform.SetParent(Poolparent.transform, false);
+
 
 				pool.instances[j] = go.GetComponent<HitscanEffect>();
 				GameDebug.Assert(pool.instances[j],"Effect prefab does not have HitscanEffect component");

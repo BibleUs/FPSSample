@@ -9,6 +9,7 @@ public enum CameraProfile
     FirstPerson,
     Shoulder,
     ThirdPerson,
+    FirstPersonVR,
 }
 
 [Serializable]

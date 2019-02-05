@@ -9,6 +9,7 @@ public class CharacterTypeDefinition : ScriptableObjectRegistryEntry
     public WeakAssetReference prefabServer;
     public WeakAssetReference prefabClient;
     public WeakAssetReference prefab1P;
+    public WeakAssetReference prefabVR;
 }
 
 

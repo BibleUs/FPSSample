@@ -164,7 +164,7 @@ public struct NetworkReader
     {
         if (m_Schema == null)
             return;
-
+            
         m_CurrentField = m_Schema.fields[m_NextFieldIndex];
         GameDebug.Assert(type == m_CurrentField.fieldType,"Property:{0} has unexpected field type:{1} Expected:{2}", m_CurrentField.name, type, m_CurrentField.fieldType);
         GameDebug.Assert(bits == m_CurrentField.bits);

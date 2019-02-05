@@ -26,14 +26,16 @@ public class HandleSpatialEffectRequests : BaseComponentSystem
 			var prefab = resource as GameObject;
 			GameDebug.Assert(prefab != null);
 			
+			var Poolparent = m_world.Spawn($"Pool_{prefab.name}");
 			var pool = new Pool();
 			pool.instances = new SpatialEffectInstance[entry.poolSize];
 			for (var j = 0; j < pool.instances.Length; j++)
 			{
 				var go = GameObject.Instantiate(prefab);
             
-				if(systemRoot != null)
-					go.transform.SetParent(systemRoot.transform, false);
+//				if(systemRoot != null)
+//					go.transform.SetParent(systemRoot.transform, false);   
+				go.transform.SetParent(Poolparent.transform, false);
 
 				pool.instances[j] = go.GetComponent<SpatialEffectInstance>();
 				GameDebug.Assert(pool.instances[j],"Effect prefab does not have SpatialEffectInstance component");

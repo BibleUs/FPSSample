@@ -38,23 +38,27 @@ GraphicsSettings:
   - {fileID: 10782, guid: 0000000000000000f000000000000000, type: 0}
   - {fileID: 16000, guid: 0000000000000000f000000000000000, type: 0}
   - {fileID: 17000, guid: 0000000000000000f000000000000000, type: 0}
-  m_PreloadedShaders: []
-  m_SpritesDefaultMaterial: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
-  m_CustomRenderPipeline: {fileID: 11400000, guid: 4bad155963d0b8b4bbdf5c13fdb260f7, type: 2}
+  m_PreloadedShaders:
+  - {fileID: 20000000, guid: 6f866d4d0a1ac01409c130be9c3dd299, type: 2}
+  - {fileID: 20000000, guid: 7515c2100d2819d4999f115b393c7c91, type: 2}
+  m_SpritesDefaultMaterial: {fileID: 10754, guid: 0000000000000000f000000000000000,
+    type: 0}
+  m_CustomRenderPipeline: {fileID: 11400000, guid: 4bad155963d0b8b4bbdf5c13fdb260f7,
+    type: 2}
   m_TransparencySortMode: 0
   m_TransparencySortAxis: {x: 0, y: 0, z: 1}
   m_DefaultRenderingPath: 3
   m_DefaultMobileRenderingPath: 1
   m_TierSettings: []
   m_LightmapStripping: 1
-  m_FogStripping: 1
-  m_InstancingStripping: 0
-  m_LightmapKeepPlain: 1
+  m_FogStripping: 0
+  m_InstancingStripping: 1
+  m_LightmapKeepPlain: 0
   m_LightmapKeepDirCombined: 1
-  m_LightmapKeepDynamicPlain: 1
-  m_LightmapKeepDynamicDirCombined: 1
+  m_LightmapKeepDynamicPlain: 0
+  m_LightmapKeepDynamicDirCombined: 0
   m_LightmapKeepShadowMask: 1
-  m_LightmapKeepSubtractive: 1
+  m_LightmapKeepSubtractive: 0
   m_FogKeepLinear: 1
   m_FogKeepExp: 1
   m_FogKeepExp2: 1

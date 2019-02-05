@@ -13,6 +13,7 @@ public class ItemTypeDefinition : ReplicatedEntityFactory
     public WeakAssetReference prefabServer;
     public WeakAssetReference prefabClient;
     public WeakAssetReference prefab1P;
+    public WeakAssetReference prefabVR;
     
     public CharBehaviorFactory abilityPrimFire;
     public CharBehaviorFactory abilitySecFire;

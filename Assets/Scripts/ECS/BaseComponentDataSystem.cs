@@ -266,7 +266,7 @@ public abstract class BaseComponentDataSystem<T1,T2,T3> : BaseComponentSystem
 		Profiler.EndSample();
 	}
 	
-	protected abstract void Update(Entity entity,T1 data1,T2 data2,T3 data3);
+	protected abstract void Update(Entity entity,T1 data1,T2 data2,T3 settings);
 }
 
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.Rendering.HDPipeline;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering.HDPipeline;
 using UnityEngine.Experimental.Rendering;
@@ -17,7 +18,7 @@ public static class RenderSettings
     public static ConfigVar rVSync;
     [ConfigVar(Name = "r.fullscreen", DefaultValue = "3", Description = "Full screen mode (0: exclusive, 1: full, 3: windowed)", Flags = ConfigVar.Flags.Save)]
     public static ConfigVar rFullscreen;
-    [ConfigVar(Name = "r.aamode", DefaultValue = "taa", Description = "AA mode: off, fxaa, smaa, taa", Flags = ConfigVar.Flags.Save)]
+    [ConfigVar(Name = "r.aamode", DefaultValue = "off", Description = "AA mode: off, fxaa, smaa, taa", Flags = ConfigVar.Flags.Save)]
     public static ConfigVar rAAMode;
     [ConfigVar(Name = "r.aaquality", DefaultValue = "high", Description = "AA quality: low, med, high", Flags = ConfigVar.Flags.Save)]
     public static ConfigVar rAAQuality;
@@ -29,7 +30,7 @@ public static class RenderSettings
     public static ConfigVar rSSAO;
     [ConfigVar(Name = "r.grain", DefaultValue = "1", Description = "Enable grain", Flags = ConfigVar.Flags.Save)]
     public static ConfigVar rGrain;
-    [ConfigVar(Name = "r.ssr", DefaultValue = "1", Description = "Enable screen space reflections", Flags = ConfigVar.Flags.Save)]
+    [ConfigVar(Name = "r.ssr", DefaultValue = "0", Description = "Enable screen space reflections", Flags = ConfigVar.Flags.Save)]
     public static ConfigVar rSSR;
     [ConfigVar(Name = "r.sss", DefaultValue = "1", Description = "Enable subsurface scattering", Flags = ConfigVar.Flags.Save)]
     public static ConfigVar rSSS;
@@ -74,10 +75,10 @@ public static class RenderSettings
         {
             GraphicsDeviceSettings.waitForPresentSyncPoint = rLateSync.IntValue > 0 ? WaitForPresentSyncPoint.EndFrame : WaitForPresentSyncPoint.BeginFrame;
         }
-        if(rOcclusionThreshold.ChangeCheck())
-        {
-            HDRenderPipeline.s_OcclusionThreshold = rOcclusionThreshold.FloatValue;
-        }
+//        if(rOcclusionThreshold.ChangeCheck())
+//        {
+//            HDRenderPipeline.s_OcclusionThreshold = rOcclusionThreshold.FloatValue;
+//        }
 
         bool updateAAFlags = false;
         bool updateFrameSettings = false;
@@ -90,7 +91,7 @@ public static class RenderSettings
             {
                 currentResX = Screen.width;
                 currentResY = Screen.height;
-                currentResRate = Screen.currentResolution.refreshRate;
+                //currentResRate = Screen.currentResolution.refreshRate;
                 rResolution.Value = currentResX + "x" + currentResY + "@" + currentResRate;
             }
         }
@@ -174,7 +175,7 @@ public static class RenderSettings
             updateFrameSettings = true;
 
         if (rShadowDistMult.ChangeCheck())
-            HDShadowSettings.shadowDistanceMultiplier = Mathf.Clamp(rShadowDistMult.FloatValue, 0.5f, 4.0f);
+            //HDShadowSettings.shadowDistanceMultiplier = Mathf.Clamp(rShadowDistMult.FloatValue, 0.5f, 4.0f);
 
         if (rDecalDist.ChangeCheck())
         {

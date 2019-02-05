@@ -4,13 +4,12 @@ using Unity.Entities;
 using UnityEngine.Profiling;
 
 [Serializable]
-public struct PresentationState : INetInterpolated<PresentationState>, IComponentData
-{
+public struct PresentationState : INetInterpolated<PresentationState>, IComponentData {
     public Vector3 position;
     public float rotation;
     public float aimYaw;
     public float aimPitch;
-    public float moveYaw;                                       // Global rotation 0->360 deg
+    public float moveYaw; // Global rotation 0->360 deg
 
     public CharPredictedStateData.LocoState charLocoState;
     public int charLocoTick;
@@ -20,18 +19,18 @@ public struct PresentationState : INetInterpolated<PresentationState>, IComponen
     public float damageDirection;
     public int sprinting;
     public float sprintWeight;
-    
+
     // Custom properties for Animation states
     public CharPredictedStateData.LocoState previousCharLocoState;
-    public int lastGroundMoveTick; 
-    public float moveAngleLocal;                                // Movement rotation realtive to character forward -180->180 deg clockwise
+    public int lastGroundMoveTick;
+    public float moveAngleLocal; // Movement rotation realtive to character forward -180->180 deg clockwise
     public float shootPoseWeight;
     public Vector2 locomotionVector;
-    public float locomotionPhase;        
+    public float locomotionPhase;
     public float banking;
     public float landAnticWeight;
     public float turnStartAngle;
-    public short turnDirection;                                 // -1 TurnLeft, 0 Idle, 1 TurnRight
+    public short turnDirection; // -1 TurnLeft, 0 Idle, 1 TurnRight
     public float squashTime;
     public float squashWeight;
     public float inAirTime;
@@ -39,32 +38,50 @@ public struct PresentationState : INetInterpolated<PresentationState>, IComponen
     public float simpleTime;
     public Vector2 footIkOffset;
     public Vector3 footIkNormalLeft;
+
     public Vector3 footIkNormaRight;
-    
-    public void Serialize(ref NetworkWriter writer, IEntityReferenceSerializer refSerializer)
-    {
+
+    //VR controls
+    public Vector3 rightControllerPos;
+    public Vector3 leftControllerPos;
+    public Vector3 headsetPos;
+
+    public Quaternion rightControllerRot;
+    public Quaternion leftControllerRot;
+    public Quaternion headsetRot;
+
+    public void Serialize(ref NetworkWriter writer, IEntityReferenceSerializer refSerializer) {
         writer.WriteVector3Q("position", position, 2);
         writer.WriteFloatQ("rotation", rotation, 0);
         writer.WriteFloatQ("aimYaw", aimYaw, 0);
         writer.WriteFloatQ("aimPitch", aimPitch, 0);
         writer.WriteFloatQ("moveYaw", moveYaw, 0);
 
-        writer.WriteInt32("charLocoState", (int)charLocoState);
+        writer.WriteInt32("charLocoState", (int) charLocoState);
         writer.WriteInt32("charLocoTick", charLocoTick);
-        writer.WriteInt32("characterAction", (int)charAction);
+        writer.WriteInt32("characterAction", (int) charAction);
         writer.WriteInt32("characterActionTick", charActionTick);
         writer.WriteBoolean("sprinting", sprinting == 1);
         writer.WriteFloatQ("sprintWeight", sprintWeight, 2);
         writer.WriteInt32("damageTick", damageTick);
-        writer.WriteFloatQ("damageDirection", damageDirection,1);
+        writer.WriteFloatQ("damageDirection", damageDirection, 1);
         
+        
+        //VR controls
+        writer.WriteVector3Q("rightControllerPos", rightControllerPos, 2);
+        writer.WriteVector3Q("leftControllerPos", leftControllerPos, 2);
+        writer.WriteVector3Q("headsetPos", headsetPos, 2);
+        writer.WriteQuaternion("rightControllerRot", rightControllerRot);
+        writer.WriteQuaternion("leftControllerRot", leftControllerRot);
+        writer.WriteQuaternion("headsetRot", headsetRot);
+
         writer.WriteFloatQ("moveAngleLocal", moveAngleLocal, 0);
         writer.WriteFloatQ("shootPoseWeight", shootPoseWeight);
         writer.WriteVector2Q("locomotionVector", locomotionVector);
         writer.WriteFloatQ("locomotionPhase", locomotionPhase);
         writer.WriteFloatQ("banking", banking);
         writer.WriteFloatQ("landAnticWeight", landAnticWeight, 2);
-        writer.WriteFloatQ("turnStartAngle", turnStartAngle,0);
+        writer.WriteFloatQ("turnStartAngle", turnStartAngle, 0);
         writer.WriteInt16("turnDirection", turnDirection);
         writer.WriteFloatQ("squashTime", squashTime, 2);
         writer.WriteFloatQ("squashWeight", squashWeight, 2);
@@ -76,23 +93,30 @@ public struct PresentationState : INetInterpolated<PresentationState>, IComponen
         writer.WriteVector3Q("footIkNormaRight", footIkNormaRight, 2);
     }
 
-    public void Deserialize(ref NetworkReader reader, IEntityReferenceSerializer refSerializer, int tick)
-    {
+    public void Deserialize(ref NetworkReader reader, IEntityReferenceSerializer refSerializer, int tick) {
         position = reader.ReadVector3Q();
         rotation = reader.ReadFloatQ();
         aimYaw = reader.ReadFloatQ();
         aimPitch = reader.ReadFloatQ();
         moveYaw = reader.ReadFloatQ();
 
-        charLocoState = (CharPredictedStateData.LocoState)reader.ReadInt32();
+        charLocoState = (CharPredictedStateData.LocoState) reader.ReadInt32();
         charLocoTick = reader.ReadInt32();
-        charAction = (CharPredictedStateData.Action)reader.ReadInt32();
+        charAction = (CharPredictedStateData.Action) reader.ReadInt32();
         charActionTick = reader.ReadInt32();
         sprinting = reader.ReadBoolean() ? 1 : 0;
         sprintWeight = reader.ReadFloatQ();
-        
+
         damageTick = reader.ReadInt32();
         damageDirection = reader.ReadFloatQ();
+        
+        //VR controls
+        rightControllerPos = reader.ReadVector3Q();
+        leftControllerPos = reader.ReadVector3Q();
+        headsetPos = reader.ReadVector3Q();
+        rightControllerRot = reader.ReadQuaternion();
+        leftControllerRot = reader.ReadQuaternion();
+        headsetRot = reader.ReadQuaternion();
 
         moveAngleLocal = reader.ReadFloatQ();
         shootPoseWeight = reader.ReadFloatQ();
@@ -112,8 +136,7 @@ public struct PresentationState : INetInterpolated<PresentationState>, IComponen
         footIkNormaRight = reader.ReadVector3Q();
     }
 
-    public void Interpolate(ref PresentationState prevState, ref PresentationState nextState, float f)
-    {
+    public void Interpolate(ref PresentationState prevState, ref PresentationState nextState, float f) {
         position = Vector3.Lerp(prevState.position, nextState.position, f);
         rotation = Mathf.LerpAngle(prevState.rotation, nextState.rotation, f);
         aimYaw = Mathf.LerpAngle(prevState.aimYaw, nextState.aimYaw, f);
@@ -125,10 +148,18 @@ public struct PresentationState : INetInterpolated<PresentationState>, IComponen
         charAction = prevState.charAction;
         charActionTick = prevState.charActionTick;
         sprinting = prevState.sprinting;
-        sprintWeight =  Mathf.Lerp(prevState.sprintWeight, nextState.sprintWeight, f);
-        
+        sprintWeight = Mathf.Lerp(prevState.sprintWeight, nextState.sprintWeight, f);
+
         damageTick = prevState.damageTick;
         damageDirection = prevState.damageDirection;
+        
+        //VR controls
+        rightControllerPos = Vector3.Lerp(prevState.rightControllerPos, nextState.rightControllerPos, f);
+        leftControllerPos = Vector3.Lerp(prevState.leftControllerPos, nextState.leftControllerPos, f);
+        headsetPos = Vector3.Lerp(prevState.headsetPos, nextState.headsetPos, f);
+        rightControllerRot = Quaternion.Lerp(prevState.rightControllerRot, nextState.rightControllerRot, f);
+        leftControllerRot = Quaternion.Lerp(prevState.leftControllerRot, nextState.leftControllerRot, f);
+        headsetRot = Quaternion.Lerp(prevState.headsetRot, nextState.headsetRot, f);
 
         moveAngleLocal = Mathf.LerpAngle(prevState.moveAngleLocal, nextState.moveAngleLocal, f);
         shootPoseWeight = Mathf.Lerp(prevState.shootPoseWeight, nextState.shootPoseWeight, f);
@@ -146,10 +177,10 @@ public struct PresentationState : INetInterpolated<PresentationState>, IComponen
         footIkOffset = Vector2.Lerp(prevState.footIkOffset, nextState.footIkOffset, f);
         footIkNormalLeft = Vector3.Lerp(prevState.footIkNormalLeft, nextState.footIkNormalLeft, f);
         footIkNormaRight = Vector3.Lerp(prevState.footIkNormaRight, nextState.footIkNormaRight, f);
+        
     }
 
-    public override string ToString()
-    {
+    public override string ToString() {
         System.Text.StringBuilder strBuilder = new System.Text.StringBuilder();
         strBuilder.AppendLine("position" + position);
         strBuilder.AppendLine("rotation" + rotation);
@@ -170,9 +201,16 @@ public struct PresentationState : INetInterpolated<PresentationState>, IComponen
         strBuilder.AppendLine("turnDirection" + turnDirection);
         strBuilder.AppendLine("footIkOffset" + footIkOffset);
 
+        strBuilder.AppendLine("rightControllerPos:" + rightControllerPos);
+        strBuilder.AppendLine("leftControllerPos:" + leftControllerPos);
+        strBuilder.AppendLine("headsetPos:" + headsetPos);
+
+        strBuilder.AppendLine("rightControllerRot:" + rightControllerRot);
+        strBuilder.AppendLine("leftControllerRot:" + leftControllerRot);
+        strBuilder.AppendLine("headsetRot:" + headsetRot);
+
         return strBuilder.ToString();
     }
 }
 
-public class CharPresentationState : ComponentDataWrapper<PresentationState>
-{}
+public class CharPresentationState : ComponentDataWrapper<PresentationState> { }

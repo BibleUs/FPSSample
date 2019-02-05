@@ -26,6 +26,8 @@ public class ItemRegistry : ScriptableObjectRegistry<ItemTypeDefinition>
                 guids.Add(entry.prefabClient.guid);
             if (!server && entry.prefab1P.guid != "")
                 guids.Add(entry.prefab1P.guid);
+            if (!server && entry.prefabVR.guid != "")
+                guids.Add(entry.prefabVR.guid);
         }
     }
 #endif

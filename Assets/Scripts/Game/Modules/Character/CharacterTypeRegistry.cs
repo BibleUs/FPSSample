@@ -21,6 +21,8 @@ public class CharacterTypeRegistry : ScriptableObjectRegistry<CharacterTypeDefin
                 guids.Add(setup.prefabClient.guid);
             if (!serverBuild && setup.prefab1P.guid != "")
                 guids.Add(setup.prefab1P.guid);
+            if (!serverBuild && setup.prefabVR.guid != "")
+                guids.Add(setup.prefabVR.guid);
         }
     }
 #endif
