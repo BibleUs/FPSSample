@@ -37,7 +37,8 @@ public class ServerGameWorld : ISnapshotGenerator, IClientCommandProcessor
         m_SpectatorCamModule = new SpectatorCamModuleServer(m_GameWorld, resourceSystem);
         m_ReplicatedEntityModule = new ReplicatedEntityModuleServer(m_GameWorld, resourceSystem, m_NetworkServer);
         m_ReplicatedEntityModule.ReserveSceneEntities(networkServer);
-        m_ItemModule = new ItemModule(m_GameWorld);
+        m_WeaponsModule = new WeaponsModule(m_GameWorld, resourceSystem, true);
+        m_BonusModule = new BonusModuleServer(m_GameWorld, resourceSystem);
 
         m_GameModeSystem = m_GameWorld.GetECSWorld().CreateManager<GameModeSystemServer>(m_GameWorld, m_ChatSystem, resourceSystem);
 
@@ -77,7 +78,8 @@ public class ServerGameWorld : ISnapshotGenerator, IClientCommandProcessor
         m_GameWorld.GetECSWorld().DestroyManager(m_platformSystem);
 
         m_ReplicatedEntityModule.Shutdown();
-        m_ItemModule.Shutdown();
+        m_BonusModule.Shutdown();
+        m_WeaponsModule.Shutdown();
         
         m_CameraSystem.Shutdown();
         m_MoveableSystem.Shutdown();
@@ -178,17 +180,19 @@ public class ServerGameWorld : ISnapshotGenerator, IClientCommandProcessor
         m_DebugPrimitiveModule.HandleRequests();
         m_HandleGrenadeRequests.Update();
         
-        // Handle newly spawned entities          
+        // Handle newly spawned entities    
+        m_BonusModule.HandleSpawn();
         m_CharacterModule.HandleSpawns();
         m_HitCollisionModule.HandleSpawning();  
         m_ReplicatedEntityModule.HandleSpawning();
-        m_ItemModule.HandleSpawn();
+        m_WeaponsModule.HandleSpawn();
 
         // Handle controlled entity changed
         m_CharacterModule.HandleControlledEntityChanged();    
 
         // Start movement of scene objects. Scene objects that player movement
         // depends on should finish movement in this phase
+        m_BonusModule.Update();
         m_MoveableSystem.Update();
         m_platformSystem.Update();                     
         m_ProjectileModule.MovementStart();        
@@ -282,7 +286,8 @@ public class ServerGameWorld : ISnapshotGenerator, IClientCommandProcessor
     readonly DebugPrimitiveModule m_DebugPrimitiveModule;
     readonly SpectatorCamModuleServer m_SpectatorCamModule;
     readonly ReplicatedEntityModuleServer m_ReplicatedEntityModule;
-    readonly ItemModule m_ItemModule;
+    readonly WeaponsModule m_WeaponsModule;
+    readonly BonusModuleServer m_BonusModule;
     
     readonly ServerCameraSystem m_CameraSystem;
     readonly GameModeSystemServer m_GameModeSystem;

@@ -217,6 +217,7 @@ public class GameModeSystemServer : ComponentSystem
                     if (Game.allowCharChange.IntValue == 1)
                     {
                         charControl.characterType = player.teamIndex;
+                        charControl.characterType = 2;// new char
                     }
                 }
 

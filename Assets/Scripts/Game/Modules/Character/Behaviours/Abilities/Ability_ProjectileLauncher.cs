@@ -4,82 +4,69 @@ using Unity.Entities;
 using UnityEngine;
 using UnityEngine.XR;
 
-[CreateAssetMenu(fileName = "Ability_ProjectileLauncher",menuName = "FPS Sample/Abilities/Ability_ProjectileLauncher")]
-public class Ability_ProjectileLauncher : CharBehaviorFactory
-{
-    public enum Phase
-    {
+[CreateAssetMenu(fileName = "Ability_ProjectileLauncher", menuName = "FPS Sample/Abilities/Ability_ProjectileLauncher")]
+public class Ability_ProjectileLauncher : CharBehaviorFactory {
+    public enum Phase {
         Idle,
         Active,
         Cooldown,
     }
-    
-    public struct LocalState : IComponentData
-    {
+
+    public struct LocalState : IComponentData {
         public int lastFireTick;
     }
-    
+
     [Serializable]
-    public struct Settings : IComponentData
-    {
-        public float activationDuration;        
+    public struct Settings : IComponentData {
+        public float activationDuration;
         public float cooldownDuration;
         public CharPredictedStateData.Action fireAction;
         public float projectileRange;
         [NonSerialized] public int projectileRegistryId;
     }
 
-    public struct PredictedState : INetPredicted<PredictedState>, IComponentData
-    {
+    public struct PredictedState : INetPredicted<PredictedState>, IComponentData {
         public int activeTick;
-        
-        public void Serialize(ref NetworkWriter writer, IEntityReferenceSerializer refSerializer)
-        {
+
+        public void Serialize(ref NetworkWriter writer, IEntityReferenceSerializer refSerializer) {
             writer.WriteInt32("activeTick", activeTick);
         }
 
-        public void Deserialize(ref NetworkReader reader, IEntityReferenceSerializer refSerializer, int tick)
-        {
+        public void Deserialize(ref NetworkReader reader, IEntityReferenceSerializer refSerializer, int tick) {
             activeTick = reader.ReadInt32();
         }
 #if UNITY_EDITOR
-        public bool VerifyPrediction(ref PredictedState state)
-        {
+        public bool VerifyPrediction(ref PredictedState state) {
             return activeTick == state.activeTick;
         }
-#endif    
+#endif
     }
-    
-    public struct InterpolatedState : INetInterpolated<InterpolatedState>, IComponentData
-    {
+
+    public struct InterpolatedState : INetInterpolated<InterpolatedState>, IComponentData {
         public int fireTick;
-        
-        public void Serialize(ref NetworkWriter writer, IEntityReferenceSerializer refSerializer)
-        {
+
+        public void Serialize(ref NetworkWriter writer, IEntityReferenceSerializer refSerializer) {
             writer.WriteInt32("fireTick", fireTick);
         }
 
-        public void Deserialize(ref NetworkReader reader, IEntityReferenceSerializer refSerializer, int tick)
-        {
+        public void Deserialize(ref NetworkReader reader, IEntityReferenceSerializer refSerializer, int tick) {
             fireTick = reader.ReadInt32();
         }
 
-        public void Interpolate(ref InterpolatedState first, ref InterpolatedState last, float t)
-        {
+        public void Interpolate(ref InterpolatedState first, ref InterpolatedState last, float t) {
             this = first;
         }
     }
-    
+
     public Settings settings;
     public ProjectileTypeDefinition projectileType;
 
-    public override Entity Create(EntityManager entityManager, List<Entity> entities)
-    {
+    public override Entity Create(EntityManager entityManager, List<Entity> entities) {
         var entity = CreateCharBehavior(entityManager);
         entities.Add(entity);
-		
+
         // Ability components
-        settings.projectileRegistryId = projectileType.registryId; 
+        settings.projectileRegistryId = projectileType.registryId;
         entityManager.AddComponentData(entity, settings);
         entityManager.AddComponentData(entity, new LocalState());
         entityManager.AddComponentData(entity, new PredictedState());
@@ -87,98 +74,90 @@ public class Ability_ProjectileLauncher : CharBehaviorFactory
         return entity;
     }
 }
-                  
+
 [DisableAutoCreation]
-class ProjectileLauncher_Update : BaseComponentDataSystem<AbilityControl,Ability_ProjectileLauncher.PredictedState,
-    Ability_ProjectileLauncher.Settings>
-{
-    public ProjectileLauncher_Update(GameWorld world) : base(world)
-    {
-        ExtraComponentRequirements = new ComponentType[] { typeof(ServerEntity) } ;
+class ProjectileLauncher_Update : BaseComponentDataSystem<AbilityControl, Ability_ProjectileLauncher.PredictedState,
+    Ability_ProjectileLauncher.Settings> {
+    public ProjectileLauncher_Update(GameWorld world) : base(world) {
+        ExtraComponentRequirements = new ComponentType[] {typeof(ServerEntity)};
     }
 
-    protected override void Update(Entity entity, AbilityControl abilityCtrl, Ability_ProjectileLauncher.PredictedState predictedState, Ability_ProjectileLauncher.Settings settings)
-    {
+    protected override void Update(Entity entity, AbilityControl abilityCtrl,
+        Ability_ProjectileLauncher.PredictedState predictedState, Ability_ProjectileLauncher.Settings settings) {
         var time = m_world.worldTime;
-        switch (abilityCtrl.behaviorState)
-        {
+        switch (abilityCtrl.behaviorState) {
             case AbilityControl.State.Idle:
-                if (abilityCtrl.active == 1)
-                {
+                if (abilityCtrl.active == 1) {
                     var charAbility = EntityManager.GetComponentData<CharBehaviour>(entity);
                     var character = EntityManager.GetComponentObject<Character>(charAbility.character);
-                    var charPredictedState = EntityManager.GetComponentData<CharPredictedStateData>(charAbility.character);
-                    
+                    var charPredictedState =
+                        EntityManager.GetComponentData<CharPredictedStateData>(charAbility.character);
+
                     abilityCtrl.behaviorState = AbilityControl.State.Active;
                     predictedState.activeTick = time.tick;
-                    
+
 //                    GameDebug.Log("Ability_ProjectileLauncher SetAction:" + state.fireAction + " tick:" + time.tick);
                     charPredictedState.SetAction(settings.fireAction, time.tick);
 
                     // Only spawn once for each tick (so it does not fire again when re-predicting)
                     var localState = EntityManager.GetComponentData<Ability_ProjectileLauncher.LocalState>(entity);
-                    if (time.tick > localState.lastFireTick)
-                    {
+                    if (time.tick > localState.lastFireTick) {
                         localState.lastFireTick = time.tick;
                         EntityManager.SetComponentData(entity, localState);
-                        
-                        var eyePos = charPredictedState.position + Vector3.up*character.eyeHeight;
-                        var interpolatedState = EntityManager.GetComponentData<Ability_ProjectileLauncher.InterpolatedState>(entity);
-                        var command = EntityManager.GetComponentObject<UserCommandComponent>(charAbility.character)
-                            .command;
-                        
-                        var endPos = eyePos + command.lookDir * settings.projectileRange;
-                        
-                        if (XRSettings.enabled) {
-                            var muzzle = character.presentations[1].GetComponent<TerraformerWeaponA>().muzzle;
-                            eyePos = muzzle.transform.position;
-                            endPos = eyePos + muzzle.transform.forward * settings.projectileRange;
-                            Debug.Log($"shot from PLauncher, char is {character.name}. Eye Pos is {eyePos} and direction is {endPos}");
-                        }
-                        
-                        
+
+                        var command = EntityManager.GetComponentObject<UserCommandComponent>(charAbility.character).command;
+                        var muzzlePos = charPredictedState.position + Vector3.up * character.eyeHeight;
+                        var interpolatedState =
+                            EntityManager.GetComponentData<Ability_ProjectileLauncher.InterpolatedState>(entity);
+
+                        var endPos = muzzlePos + command.lookDir * settings.projectileRange;
+
+                        var weapon = character.presentations[1].GetComponent<TerraformerWeaponA>();
+                        var muzzle = weapon.muzzle;
+                        muzzlePos = muzzle.transform.position;
+                        weapon.savedPos = muzzlePos;
+                        endPos = muzzlePos + muzzle.transform.forward * settings.projectileRange;
+
                         ProjectileRequest.Create(PostUpdateCommands, time.tick, time.tick - command.renderTick,
-                            settings.projectileRegistryId, charAbility.character, character.teamId, eyePos, endPos);
+                            settings.projectileRegistryId, charAbility.character, character.teamId, muzzlePos, endPos);
 
                         interpolatedState.fireTick = time.tick;
                         EntityManager.SetComponentData(entity, interpolatedState);
                     }
-                    
+
                     EntityManager.SetComponentData(entity, abilityCtrl);
                     EntityManager.SetComponentData(entity, predictedState);
                     EntityManager.SetComponentData(charAbility.character, charPredictedState);
                 }
+
                 break;
-            case AbilityControl.State.Active:
-            {
+            case AbilityControl.State.Active: {
                 var phaseDuration = time.DurationSinceTick(predictedState.activeTick);
-                if (phaseDuration > settings.activationDuration)
-                {
+                if (phaseDuration > settings.activationDuration) {
                     var charAbility = EntityManager.GetComponentData<CharBehaviour>(entity);
-                    var charPredictedState = EntityManager.GetComponentData<CharPredictedStateData>(charAbility.character);
+                    var charPredictedState =
+                        EntityManager.GetComponentData<CharPredictedStateData>(charAbility.character);
 
                     abilityCtrl.behaviorState = AbilityControl.State.Cooldown;
-                    
+
 //                    GameDebug.Log("Ability_ProjectileLauncher SetAction:" + CharPredictedStateData.Action.None + " tick:" + time.tick);
                     charPredictedState.SetAction(CharPredictedStateData.Action.None, time.tick);
-                    
+
                     EntityManager.SetComponentData(entity, abilityCtrl);
                     EntityManager.SetComponentData(charAbility.character, charPredictedState);
                 }
+
                 break;
             }
-            case AbilityControl.State.Cooldown:
-            {
+            case AbilityControl.State.Cooldown: {
                 var phaseDuration = time.DurationSinceTick(predictedState.activeTick);
-                if (phaseDuration > settings.cooldownDuration)
-                {
+                if (phaseDuration > settings.cooldownDuration) {
                     abilityCtrl.behaviorState = AbilityControl.State.Idle;
                     EntityManager.SetComponentData(entity, abilityCtrl);
                 }
+
                 break;
             }
         }
-
     }
 }
-

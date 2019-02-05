@@ -32,7 +32,7 @@ public class HandleHitscanEffectRequests : BaseComponentSystem
             
 //				if(systemRoot != null)
 //					go.transform.SetParent(systemRoot.transform, false);
-				go.transform.SetParent(Poolparent.transform, false);
+				go.transform.SetParent(Poolparent.transform);
 
 
 				pool.instances[j] = go.GetComponent<HitscanEffect>();

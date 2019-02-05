@@ -93,6 +93,7 @@ public class Skeleton : MonoBehaviour, ISkeletonTypeComponent//
         }
 
         parentIndex = new int[numBones];
+        
         for (var i = 0; i < numBones; i++)
         {
             parentIndex[i] = GetBoneIndex(bones[i].parent.gameObject.name.GetHashCode());

@@ -294,33 +294,33 @@ class AutoRifle_Update : BaseComponentDataSystem<CharBehaviour, AbilityControl, 
             if (predictedState.COF > settings.maxCOF)
                 predictedState.COF = settings.maxCOF;
 
-            var eyePos = charPredictedState.position + Vector3.up * character.eyeHeight;
+            var muzzlePos = charPredictedState.position + Vector3.up * character.eyeHeight;
 
-//            Debug.DrawRay(rayStart, direction * 1000, Color.green, 1.0f);
 
             const int distance = 500;
             var collisionMask = ~(1 << character.teamId);
 
 
-            if (XRSettings.enabled) {
-                 var muzzle = character.presentations[1].GetComponent<TerraformerWeaponA>().muzzle;
-                eyePos = muzzle.transform.position;
-                aimDir = (float3) muzzle.forward;
+            var weapon = character.presentations[1].GetComponent<TerraformerWeaponA>();
+            var muzzle = weapon.muzzle;
+            muzzlePos = muzzle.transform.position;
+            weapon.savedPos = muzzlePos;
+            muzzlePos = muzzle.transform.position;
+            aimDir = (float3) muzzle.forward;
 
-                cross = math.cross(new float3(0, 1, 0), aimDir);
-                cofAngle = math.radians(predictedState.COF) * 0.5f;
-                direction = math.mul(quaternion.AxisAngle(cross, cofAngle), aimDir);
+            cross = math.cross(new float3(0, 1, 0), aimDir);
+            cofAngle = math.radians(predictedState.COF) * 0.5f;
+            direction = math.mul(quaternion.AxisAngle(cross, cofAngle), aimDir);
 
-                // TODO use tick as random seed so server and client calculates same angle for given tick  
-                rndAngle = UnityEngine.Random.Range(0, (float) math.PI * 2);
-                rndRot = quaternion.AxisAngle(aimDir, rndAngle);
-                direction = math.mul(rndRot, direction);
-                Debug.Log($"Eye Pos is {eyePos} and direction is {direction}");
-            }
+            // TODO use tick as random seed so server and client calculates same angle for given tick  
+            rndAngle = UnityEngine.Random.Range(0, (float) math.PI * 2);
+            rndRot = quaternion.AxisAngle(aimDir, rndAngle);
+            direction = math.mul(rndRot, direction);
+
 
             var queryReciever = World.GetExistingManager<RaySphereQueryReciever>();
             internalState.rayQueryId = queryReciever.RegisterQuery(new RaySphereQueryReciever.Query() {
-                origin = eyePos,
+                origin = muzzlePos,
                 direction = direction,
                 distance = distance,
                 sphereCastExcludeOwner = charAbility.character,

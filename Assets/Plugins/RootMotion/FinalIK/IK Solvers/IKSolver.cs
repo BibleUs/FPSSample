@@ -53,6 +53,7 @@ namespace RootMotion.FinalIK {
 		/// Updates the %IK solver. Use only if this %IKSolver is not a member of an %IK component or the %IK component has been disabled and you intend to manually control the updating.
 		/// </summary>
 		public void Update() {
+
 			if (OnPreUpdate != null) OnPreUpdate();
 
 			if (firstInitiation) Initiate(root); // when the IK component has been disabled in Awake, this will initiate it.

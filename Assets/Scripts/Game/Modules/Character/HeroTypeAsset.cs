@@ -5,11 +5,6 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "HeroType", menuName = "FPS Sample/Hero/HeroType")]
 public class HeroTypeAsset : ScriptableObjectRegistryEntry
 {
-    [Serializable]
-    public class ItemEntry
-    {
-        public ItemTypeDefinition itemType;
-    }
 
     [Serializable]
     public class SprintCameraSettings
@@ -27,7 +22,6 @@ public class HeroTypeAsset : ScriptableObjectRegistryEntry
     public ReplicatedEntityFactory behaviorsController;
     
     public CharacterTypeDefinition character;
-    public ItemEntry[] items;
 }
 
 #if UNITY_EDITOR

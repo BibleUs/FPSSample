@@ -45,6 +45,26 @@
       "type": "vector2"
     },
     {
+      "name": "/actions/default/in/DPad_R",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/default/in/DPad_L",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/default/in/DPad_U",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/default/in/DPad_D",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/default/in/DPad_C",
+      "type": "boolean"
+    },
+    {
       "name": "/actions/default/out/Haptic",
       "type": "vibration"
     }

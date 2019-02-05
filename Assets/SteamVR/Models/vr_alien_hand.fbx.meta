@@ -222,6 +222,7 @@ ModelImporter:
     4300008: renderMesh0
     4300010: alienHand
     9500000: //RootNode
+    11400000: //RootNode
     13700000: Icosphere.001
     13700002: alienHand
   externalObjects: {}
@@ -276,7 +277,7 @@ ModelImporter:
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
     useFileScale: 0
-    previousCalculatedGlobalScale: 1
+    previousCalculatedGlobalScale: 100
     hasPreviousCalculatedGlobalScale: 1
   tangentSpace:
     normalSmoothAngle: 60

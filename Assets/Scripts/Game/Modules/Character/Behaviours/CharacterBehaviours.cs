@@ -6,13 +6,13 @@ public class CharacterBehaviours
     public static void CreateHandleSpawnSystems(GameWorld world,SystemCollection systems, BundledResourceManager resourceManager, bool server)
     {        
         systems.Add(world.GetECSWorld().CreateManager<HandleCharacterSpawn>(world, resourceManager, server)); // TODO (mogensh) needs to be done first as it creates presentation
-        systems.Add(world.GetECSWorld().CreateManager<HandleAnimStateCtrlSpawn>(world));
+        //systems.Add(world.GetECSWorld().CreateManager<HandleAnimStateCtrlSpawn>(world));
     }
 
     public static void CreateHandleDespawnSystems(GameWorld world,SystemCollection systems)
     {
         systems.Add(world.GetECSWorld().CreateManager<HandleCharacterDespawn>(world));  // TODO (mogens) HandleCharacterDespawn dewpans char presentation and needs to be called before other HandleDespawn. How do we ensure this ?   
-        systems.Add(world.GetECSWorld().CreateManager<HandleAnimStateCtrlDespawn>(world));
+        //systems.Add(world.GetECSWorld().CreateManager<HandleAnimStateCtrlDespawn>(world));
     }
     
     public static void CreateMovementStartSystems(GameWorld world, SystemCollection systems)

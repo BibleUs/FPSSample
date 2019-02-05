@@ -166,7 +166,7 @@ public class Game : MonoBehaviour
     public event UpdateDelegate endUpdateEvent;
 
     // Vars owned by server and replicated to clients
-    [ConfigVar(Name = "server.tickrate", DefaultValue = "60", Description = "Tickrate for server", Flags = ConfigVar.Flags.ServerInfo)]
+    [ConfigVar(Name = "server.tickrate", DefaultValue = "90", Description = "Tickrate for server", Flags = ConfigVar.Flags.ServerInfo)]
     public static ConfigVar serverTickRate;
 
     [ConfigVar(Name = "config.fov", DefaultValue = "111", Description = "Field of view", Flags = ConfigVar.Flags.Save)]
@@ -334,7 +334,7 @@ public class Game : MonoBehaviour
         }
 
         // If -logfile was passed, we try to put our own logs next to the engine's logfile
-        var engineLogFileLocation = ".";
+        var engineLogFileLocation = "./logs";
         var logfileArgIdx = commandLineArgs.IndexOf("-logfile");
         if(logfileArgIdx >= 0 && commandLineArgs.Count >= logfileArgIdx)
         {

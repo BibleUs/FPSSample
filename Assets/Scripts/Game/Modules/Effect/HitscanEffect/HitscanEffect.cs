@@ -12,8 +12,7 @@ public class HitscanEffect : MonoBehaviour
 	{
 		m_startPosition = startPos;
 		m_endPosition =  endPos;
-		m_time = 0;
-		
+		m_time = 0;	
 		lineRenderer.enabled = true;
 		UpdateLineRenderer();
 	}

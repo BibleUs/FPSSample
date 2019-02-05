@@ -296,13 +296,12 @@ class Chaingun_Update : BaseComponentDataSystem<CharBehaviour, AbilityControl,Ab
             var eyePos = charPredictedState.position + Vector3.up*character.eyeHeight; 
             var endPos = eyePos + command.lookDir * settings.projectileRange;
             
-            if (XRSettings.enabled) {
                 Debug.Log($"character is {character} and item is {character.presentations[1].GetComponent<RobotWeaponA>()}");
                 var muzzle = character.presentations[1].GetComponent<RobotWeaponA>().muzzle;
                 eyePos = muzzle.transform.position;
                 endPos = eyePos + muzzle.transform.forward * settings.projectileRange;
                 Debug.Log($"shot from Chaingun, char is {character.name}. Eye Pos is {eyePos} and direction is {endPos}");
-            }
+          
 
             //GameDebug.Log("Request Projectile. Tick:" + tick);
             ProjectileRequest.Create(PostUpdateCommands, tick, tick - command.renderTick,

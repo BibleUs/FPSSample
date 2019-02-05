@@ -1,7 +1,7 @@
 {
 	
   "bindings": {
-    "/actions/buggy": {
+	"/actions/buggy": {
 		"chords": [],
 		"poses": [],
 		"haptics": [],
@@ -157,6 +157,54 @@
 						"output": "/actions/default/in/trackpad"
 					}
 				}
+			},
+			{
+				"path": "/user/hand/left/input/trackpad",
+				"mode": "dpad",
+				"parameters": {
+					"sub_mode": "click"
+				},
+				"inputs": {
+					"east": {
+						"output": "/actions/default/in/dpad_r"
+					},
+					"north": {
+						"output": "/actions/default/in/dpad_u"
+					},
+					"south": {
+						"output": "/actions/default/in/dpad_d"
+					},
+					"west": {
+						"output": "/actions/default/in/dpad_l"
+					},
+					"center": {
+						"output": "/actions/default/in/dpad_c"
+					}
+				}
+			},
+			{
+				"path": "/user/hand/right/input/trackpad",
+				"mode": "dpad",
+				"parameters": {
+					"sub_mode": "click"
+				},
+				"inputs": {
+					"east": {
+						"output": "/actions/default/in/dpad_r"
+					},
+					"north": {
+						"output": "/actions/default/in/dpad_u"
+					},
+					"south": {
+						"output": "/actions/default/in/dpad_d"
+					},
+					"west": {
+						"output": "/actions/default/in/dpad_l"
+					},
+					"center": {
+						"output": "/actions/default/in/dpad_c"
+					}
+				}
 			}
 		],
 		"skeleton": [
@@ -176,7 +224,7 @@
 		"haptics": [],
 		"sources": [],
 		"skeleton": []
-    }
+	}
 	},
   "controller_type": "vive_controller",
   "description": "",

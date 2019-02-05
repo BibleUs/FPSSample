@@ -11,21 +11,23 @@ public class CharacterVR : MonoBehaviour {
 
     public GameObject CameraVR;
     public VRIK vrik;
-
-
+    private Transform rightAttach;
+    
     public void Init() {
         var starter = Instantiate(CameraVR, gameObject.transform).GetComponent<VRStarter>();
         headset = starter.headset;
         rightController = starter.right;
         leftController = starter.left;
-        vrik.solver.spine.headTarget = headset;
-        vrik.solver.rightArm.target = rightController;
-        vrik.solver.leftArm.target = leftController;
+        vrik.solver.spine.headTarget = starter.headsetOffset;
+        vrik.solver.rightArm.target = starter.rightControllerOffset;
+        vrik.solver.leftArm.target = starter.leftControllerOffset;
+        rightAttach = starter.rightAttach;
         headset.GetComponent<Camera>().enabled = false;
     }
 
-    public void SetAsLocalPlayer() {
+    public Transform SetAsLocalPlayer() {
         headset.GetComponent<Camera>().enabled = true;
+        return rightAttach;
     }
 
     public void UpdatePositions(PresentationState ps) {
@@ -36,4 +38,8 @@ public class CharacterVR : MonoBehaviour {
         leftController.localPosition = ps.leftControllerPos;
         leftController.localRotation = ps.leftControllerRot;
     }
+
+    
+
+    
 }

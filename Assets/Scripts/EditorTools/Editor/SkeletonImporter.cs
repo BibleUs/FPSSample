@@ -131,6 +131,7 @@ public class SkeletonImporter : AssetPostprocessor
     {
         // Attempt to find skeleton root
         var skeletonRoot = root.transform.Find("Skeleton");
+        if(skeletonRoot == null) skeletonRoot = root.transform.Find("Root"); 
         
         // TODO: (sunek) Be able to setup skeleton within the editor and get rid of this?
         if (skeletonRoot == null)

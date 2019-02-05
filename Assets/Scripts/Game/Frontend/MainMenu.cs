@@ -61,6 +61,7 @@ public class MainMenu : MonoBehaviour
         uiBinding.gamemode.RefreshShownValue();
 
         uiBinding.levelname.options.Clear();
+        uiBinding.levelname.options.Add(new Dropdown.OptionData("testlevel"));
         uiBinding.levelname.options.Add(new Dropdown.OptionData("Level_01"));
         uiBinding.levelname.options.Add(new Dropdown.OptionData("Level_00"));
         uiBinding.levelname.RefreshShownValue();

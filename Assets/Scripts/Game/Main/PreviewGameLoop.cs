@@ -186,7 +186,7 @@ public class PreviewGameLoop : Game.IGameLoop
         m_SpectatorCamModuleServer = new SpectatorCamModuleServer(m_GameWorld, m_resourceSystem);    
         m_SpectatorCamModuleClient = new SpectatorCamModuleClient(m_GameWorld);
         m_EffectModule = new EffectModuleClient(m_GameWorld, m_resourceSystem);
-        m_ItemModule = new ItemModule(m_GameWorld);
+        m_WeaponsModule = new WeaponsModule(m_GameWorld, m_resourceSystem, false);
         
         m_ragdollModule = new RagdollModule(m_GameWorld);
         
@@ -246,7 +246,7 @@ public class PreviewGameLoop : Game.IGameLoop
         m_SpectatorCamModuleServer.Shutdown();
         m_SpectatorCamModuleClient.Shutdown();
         m_EffectModule.Shutdown();
-        m_ItemModule.Shutdown();
+        m_WeaponsModule.Shutdown();
         
         m_GameWorld.GetECSWorld().DestroyManager(m_DamageAreaSystemServer);
         m_GameWorld.GetECSWorld().DestroyManager(m_DespawnProjectiles);
@@ -349,7 +349,7 @@ public class PreviewGameLoop : Game.IGameLoop
         m_FanSystem.HandleSpawning();
         m_TranslateScaleSystem.HandleSpawning();
         m_ProjectileModule.HandleProjectileSpawn();
-        m_ItemModule.HandleSpawn();
+        m_WeaponsModule.HandleSpawn();
 
         // Handle controlled entity changed
         m_PlayerModuleClient.HandleControlledEntityChanged();
@@ -417,7 +417,7 @@ public class PreviewGameLoop : Game.IGameLoop
             m_HitCollisionModule.StoreColliderState();
             
             m_CharacterModule.LateUpdate();
-            m_ItemModule.LateUpdate();
+            m_WeaponsModule.LateUpdate();
             m_ragdollModule.LateUpdate();
             m_ApplyGrenadePresentation.Update();
             m_ProjectileModule.UpdateClientProjectilesPredicted();
@@ -514,7 +514,7 @@ public class PreviewGameLoop : Game.IGameLoop
     SpectatorCamModuleServer m_SpectatorCamModuleServer;
     SpectatorCamModuleClient m_SpectatorCamModuleClient;
     EffectModuleClient m_EffectModule;
-    ItemModule m_ItemModule;
+    WeaponsModule m_WeaponsModule;
     UpdateReplicatedOwnerFlag m_UpdateReplicatedOwnerFlag;
 
     RagdollModule m_ragdollModule;

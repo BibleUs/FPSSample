@@ -22,11 +22,11 @@ public class LocalPlayerCharacterControl : MonoBehaviour {
     public List<AbilityUI> registeredCharUIs = new List<AbilityUI>();
 
     public class FirstPersonData {
-        public Entity char3P;
-        public Entity char1P;
-        public Entity charVR;
-        public List<CharPresentation> presentations1P = new List<CharPresentation>();
-        public List<CharPresentation> presentationsVR = new List<CharPresentation>();
+        public Entity localPlayerEntity;
+
+        public Entity charEntity;
+
+        public List<CharPresentation> presentations = new List<CharPresentation>();
     }
 
     public FirstPersonData firstPerson = new FirstPersonData();
@@ -64,7 +64,7 @@ public class UpdateCharacter1PSpawn : BaseComponentSystem {
                 ? localPlayer.controlledEntity
                 : Entity.Null;
 
-            if (characterControl.firstPerson.char3P != controlledChar3PEntity) {
+            if (characterControl.firstPerson.localPlayerEntity != controlledChar3PEntity) {
                 charControlBuffer.Add(characterControl);
                 entityBuffer.Add(controlledChar3PEntity);
             }
@@ -75,19 +75,12 @@ public class UpdateCharacter1PSpawn : BaseComponentSystem {
                 var charCtrl = charControlBuffer[i];
                 var charClientEntity = entityBuffer[i];
 
-                // Despawn all previous presentation
-                foreach (var charPresentation in charCtrl.firstPerson.presentations1P) {
+                foreach (var charPresentation in charCtrl.firstPerson.presentations) {
                     m_world.RequestDespawn(charPresentation.gameObject, PostUpdateCommands);
                 }
 
-                foreach (var charPresentation in charCtrl.firstPerson.presentationsVR) {
-                    m_world.RequestDespawn(charPresentation.gameObject, PostUpdateCommands);
-                }
-
-                charCtrl.firstPerson.presentations1P.Clear();
-                charCtrl.firstPerson.char1P = Entity.Null;
-                charCtrl.firstPerson.charVR = Entity.Null;
-                charCtrl.firstPerson.char3P = charClientEntity;
+                charCtrl.firstPerson.presentations.Clear();
+                charCtrl.firstPerson.localPlayerEntity = charClientEntity;
 
                 // TODO (mogensh) do all creation of character presentation one place ?
                 // Spawn new 1P Presentation
@@ -95,22 +88,22 @@ public class UpdateCharacter1PSpawn : BaseComponentSystem {
                     var character = EntityManager.GetComponentObject<Character>(charClientEntity);
                     if (XRSettings.enabled) {
                         GameDebug.Log("VR Enabled, no need to spawn 1P char");
-//                        var charVRGUID = character.heroTypeData.character.prefabVR.guid;
-//                        var prefabVR = m_ResourceManager.LoadSingleAssetResource(charVRGUID) as GameObject;
-//                        var charVRGOE = m_world.Spawn<GameObjectEntity>(prefabVR);
+//                        var charVRGUID = character.heroTypeData.character.prefabClient.guid;
+//                        var prefabClient = m_ResourceManager.LoadSingleAssetResource(charVRGUID) as GameObject;
+//                        var charVRGOE = m_world.Spawn<GameObjectEntity>(prefabClient);
 //
 //                        var charVREntity = charVRGOE.Entity;
 //                        var charVRPresentation = EntityManager.GetComponentObject<CharPresentation>(charVREntity);
 //                        charVRPresentation.character = charClientEntity;
 //                        charVRPresentation.updateTransform = true;
-//                        charCtrl.firstPerson.presentationsVR.Add(charVRPresentation);
+//                        charCtrl.firstPerson.presentations.Add(charVRPresentation);
 //                        charCtrl.firstPerson.charVR = charVREntity;
 //                        character.presentationVR = charVREntity;
-//                        character.presentationsVR.Add(charVRPresentation);
+//                        character.presentations.Add(charVRPresentation);
 //                        
 //                        
 //                        foreach (var itemEntry in character.heroTypeData.items) {
-//                            var itemVRGUID = itemEntry.itemType.prefabVR.guid;
+//                            var itemVRGUID = itemEntry.weaponType.prefabClient.guid;
 //                            if (itemVRGUID != "") {
 //                                var itemPrefabVR = m_ResourceManager.LoadSingleAssetResource(itemVRGUID) as GameObject;
 //                                var itemGOE = m_world.Spawn<GameObjectEntity>(itemPrefabVR);
@@ -119,42 +112,45 @@ public class UpdateCharacter1PSpawn : BaseComponentSystem {
 //                                var itemPresentation = EntityManager.GetComponentObject<CharPresentation>(itemEntity);
 //                                itemPresentation.character = charClientEntity;
 //                                itemPresentation.attachToPresentation = charVREntity;
-//                                charCtrl.firstPerson.presentationsVR.Add(itemPresentation);
-//                                character.presentationsVR.Add(itemPresentation);
+//                                charCtrl.firstPerson.presentations.Add(itemPresentation);
+//                                character.presentations.Add(itemPresentation);
 //                            }
 //                        }
-                        charCtrl.firstPerson.charVR = character.presentation;
+                        charCtrl.firstPerson.charEntity = character.presentation;
+                        //charCtrl.firstPerson.presentations.AddRange(character.presentations);
                         var charVR = EntityManager.GetComponentObject<CharacterVR>(character.presentation);
+//                        var charPresentation = EntityManager.GetComponentObject<CharPresentation>(character.presentation);
+//                        charPresentation.itemAttachBone =
                         charVR.SetAsLocalPlayer();
                     } else {
-                        GameDebug.Log("Spawning 1P char and items");
-                        var char1PGUID = character.heroTypeData.character.prefab1P.guid;
-                        var prefab1P = m_ResourceManager.LoadSingleAssetResource(char1PGUID) as GameObject;
-                        var char1PGOE = m_world.Spawn<GameObjectEntity>(prefab1P);
+//                        GameDebug.Log("Spawning 1P char and items");
+//                        var char1PGUID = character.heroTypeData.character.prefab1P.guid;
+//                        var prefab1P = m_ResourceManager.LoadSingleAssetResource(char1PGUID) as GameObject;
+//                        var char1PGOE = m_world.Spawn<GameObjectEntity>(prefab1P);
+//
+//
+//                        var char1PEntity = char1PGOE.Entity;
+//                        var char1PPresentation = EntityManager.GetComponentObject<CharPresentation>(char1PEntity);
+//                        char1PPresentation.character = charClientEntity;
+//                        char1PPresentation.updateTransform = false;
+//                        charCtrl.firstPerson.presentations1P.Add(char1PPresentation);
+//                        charCtrl.firstPerson.char1P = char1PEntity;
 
-
-                        var char1PEntity = char1PGOE.Entity;
-                        var char1PPresentation = EntityManager.GetComponentObject<CharPresentation>(char1PEntity);
-                        char1PPresentation.character = charClientEntity;
-                        char1PPresentation.updateTransform = false;
-                        charCtrl.firstPerson.presentations1P.Add(char1PPresentation);
-                        charCtrl.firstPerson.char1P = char1PEntity;
-
-
-                        // Create items
-                        foreach (var itemEntry in character.heroTypeData.items) {
-                            var item1PGUID = itemEntry.itemType.prefab1P.guid;
-                            if (item1PGUID != "") {
-                                var itemPrefab1P = m_ResourceManager.LoadSingleAssetResource(item1PGUID) as GameObject;
-                                var itemGOE = m_world.Spawn<GameObjectEntity>(itemPrefab1P);
-                                var itemEntity = itemGOE.Entity;
-
-                                var itemPresentation = EntityManager.GetComponentObject<CharPresentation>(itemEntity);
-                                itemPresentation.character = charClientEntity;
-                                itemPresentation.attachToPresentation = char1PEntity;
-                                charCtrl.firstPerson.presentations1P.Add(itemPresentation);
-                            }
-                        }
+//
+//                        // Create items
+//                        foreach (var itemEntry in character.heroTypeData.items) {
+//                            var item1PGUID = itemEntry.weaponType.prefab1P.guid;
+//                            if (item1PGUID != "") {
+//                                var itemPrefab1P = m_ResourceManager.LoadSingleAssetResource(item1PGUID) as GameObject;
+//                                var itemGOE = m_world.Spawn<GameObjectEntity>(itemPrefab1P);
+//                                var itemEntity = itemGOE.Entity;
+//
+//                                var itemPresentation = EntityManager.GetComponentObject<CharPresentation>(itemEntity);
+//                                itemPresentation.character = charClientEntity;
+//                                itemPresentation.attachToPresentation = char1PEntity;
+//                                charCtrl.firstPerson.presentations1P.Add(itemPresentation);
+//                            }
+//                        }
                     }
                 }
             }
@@ -185,11 +181,11 @@ public class
             return;
         }
 
-        if (characterControl.firstPerson.char1P == Entity.Null && characterControl.firstPerson.charVR == Entity.Null) {
+        if (characterControl.firstPerson.charEntity == Entity.Null) {
             controlledEntity = Entity.Null;
             return;
         }
-        
+
         cameraSettings.isEnabled = true;
 
         GameDebug.Assert(EntityManager.HasComponent<PresentationState>(localPlayer.controlledEntity),
@@ -208,9 +204,7 @@ public class
         }
 
         // Update character visibility
-        var camProfile = (XRSettings.enabled)
-            ? (CameraProfile.FirstPersonVR)
-            : (forceThirdPerson ? CameraProfile.ThirdPerson : charPredictedState.cameraProfile);
+        var camProfile = (forceThirdPerson ? CameraProfile.ThirdPerson : charPredictedState.cameraProfile);
 
 //        foreach (var charPress in character.presentations) {
 //            charPress.SetVisible(camProfile == CameraProfile.ThirdPerson);
@@ -220,7 +214,7 @@ public class
 //            charPress.SetVisible(camProfile == CameraProfile.FirstPerson);
 //        }
 //
-//        foreach (var charPress in characterControl.firstPerson.presentationsVR) {
+//        foreach (var charPress in characterControl.firstPerson.presentations) {
 //            charPress.SetVisible(camProfile == CameraProfile.FirstPersonVR);
 //        }
 
@@ -238,33 +232,30 @@ public class
         //cameraSettings.fieldOfView = Mathf.MoveTowards(cameraSettings.fieldOfView, targetFOV, speed);
 
         switch (camProfile) {
-            case CameraProfile.FirstPersonVR: {
-                var charVRPresentation =
-                    EntityManager.GetComponentObject<CharPresentation>(characterControl.firstPerson.charVR);
-                charVRPresentation.transform.rotation = Quaternion.identity;
-                break;
-            }
             case CameraProfile.FirstPerson: {
-                var character1P = EntityManager.GetComponentObject<Character1P>(characterControl.firstPerson.char1P);
-                var eyePos = charPredictedState.position + Vector3.up * character.eyeHeight;
-
-                // Set camera position and adjust 1P char. As 1P char is scaled down we need to "up-scale" camera
-                // animation to world space. We dont want to upscale cam transform relative to 1PChar so we adjust
-                // position accordingly
-                var camLocalOffset = character1P.cameraTransform.position - character1P.transform.position;
-                var cameraRotationOffset = Quaternion.Inverse(character1P.transform.rotation) *
-                                           character1P.cameraTransform.rotation;
-                var camWorldOffset = camLocalOffset / character1P.transform.localScale.x;
-                var camWorldPos = eyePos + camWorldOffset;
-                var charWorldPos = camWorldPos - camLocalOffset;
-
-                cameraSettings.position = camWorldPos;
-                cameraSettings.rotation = userCommand.command.lookRotation * cameraRotationOffset;
-
-                var char1PPresentation =
-                    EntityManager.GetComponentObject<CharPresentation>(characterControl.firstPerson.char1P);
-                char1PPresentation.transform.position = charWorldPos;
-                char1PPresentation.transform.rotation = userCommand.command.lookRotation;
+                var charVRPresentation =
+                    EntityManager.GetComponentObject<CharPresentation>(characterControl.firstPerson.charEntity);
+                charVRPresentation.transform.rotation = Quaternion.identity;
+//                var character1P = EntityManager.GetComponentObject<Character1P>(characterControl.firstPerson.charEntity);
+//                var eyePos = charPredictedState.position + Vector3.up * character.eyeHeight;
+//
+//                // Set camera position and adjust 1P char. As 1P char is scaled down we need to "up-scale" camera
+//                // animation to world space. We dont want to upscale cam transform relative to 1PChar so we adjust
+//                // position accordingly
+//                var camLocalOffset = character1P.cameraTransform.position - character1P.transform.position;
+//                var cameraRotationOffset = Quaternion.Inverse(character1P.transform.rotation) *
+//                                           character1P.cameraTransform.rotation;
+//                var camWorldOffset = camLocalOffset / character1P.transform.localScale.x;
+//                var camWorldPos = eyePos + camWorldOffset;
+//                var charWorldPos = camWorldPos - camLocalOffset;
+//
+//                cameraSettings.position = camWorldPos;
+//                cameraSettings.rotation = userCommand.command.lookRotation * cameraRotationOffset;
+//
+//                var char1PPresentation =
+//                    EntityManager.GetComponentObject<CharPresentation>(characterControl.firstPerson.charEntity);
+//                char1PPresentation.transform.position = charWorldPos;
+//                char1PPresentation.transform.rotation = userCommand.command.lookRotation;
 
                 break;
             }

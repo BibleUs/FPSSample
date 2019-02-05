@@ -89,8 +89,8 @@ public class DefaultCharBehaviourController : ReplicatedEntityFactory
     }
 
     public CharBehaviorFactory abilityMovement;
-//    public CharBehaviorFactory abilityPrimFire;
-//    public CharBehaviorFactory abilitySecFire;
+    public CharBehaviorFactory abilityPrimFire;
+    public CharBehaviorFactory abilitySecFire;
     public CharBehaviorFactory abilitySprint;
     public CharBehaviorFactory abilityMelee;
     public CharBehaviorFactory abilityEmote;
@@ -119,8 +119,8 @@ public class DefaultCharBehaviourController : ReplicatedEntityFactory
         var internalState = new InternalState
         {
             abilityMovement = abilityMovement.Create(entityManager, entities),
-//            abilityPrimFire = abilityPrimFire.Create(entityManager, entities),
-//            abilitySecFire = abilitySecFire.Create(entityManager, entities),
+            abilityPrimFire = abilityPrimFire.Create(entityManager, entities),
+            abilitySecFire = abilitySecFire.Create(entityManager, entities),
             abilitySprint = abilitySprint.Create(entityManager, entities),
             abilityMelee = abilityMelee.Create(entityManager, entities),
             abilityEmote = abilityEmote.Create(entityManager, entities),

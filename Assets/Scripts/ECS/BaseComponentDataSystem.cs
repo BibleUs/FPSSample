@@ -66,7 +66,8 @@ public abstract class BaseComponentSystem<T1,T2> : BaseComponentSystem
 	string name; 
 	
 	public BaseComponentSystem(GameWorld world) : base(world) {}
-	
+
+
 	protected override void OnCreateManager()
 	{
 		base.OnCreateManager();

@@ -51,13 +51,11 @@ public class CharacterModulePreview : CharacterModuleShared
         var charRegistry = resourceSystem.GetResourceRegistry<CharacterTypeRegistry>();
         for (var i = 0; i < charRegistry.entries.Count; i++)
         {
-            resourceSystem.LoadSingleAssetResource(charRegistry.entries[i].prefab1P.guid);
             resourceSystem.LoadSingleAssetResource(charRegistry.entries[i].prefabClient.guid);
         }
-        var itemRegistry = resourceSystem.GetResourceRegistry<ItemRegistry>();
+        var itemRegistry = resourceSystem.GetResourceRegistry<WeaponRegistry>();
         for (var i = 0; i < itemRegistry.entries.Count; i++)
         {
-            resourceSystem.LoadSingleAssetResource(itemRegistry.entries[i].prefab1P.guid);
             resourceSystem.LoadSingleAssetResource(itemRegistry.entries[i].prefabClient.guid);
         }
 

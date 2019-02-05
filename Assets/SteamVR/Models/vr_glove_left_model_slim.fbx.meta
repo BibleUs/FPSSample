@@ -71,6 +71,7 @@ ModelImporter:
     400064: wrist_l
     4300000: vr_glove_left_slim
     9500000: //RootNode
+    11400000: //RootNode
     13700000: vr_glove_left_slim
   externalObjects: {}
   materials:

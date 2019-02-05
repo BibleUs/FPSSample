@@ -8,7 +8,7 @@ public class CharPresentation : MonoBehaviour {
     public Transform itemAttachBone;
 
     public bool attached;
-    
+
     public AbilityUI[]
         uiPrefabs; // TODO (mogensh) perhaps move UI to their own char presentation (so they are just just char and items)
 
@@ -46,7 +46,7 @@ public class UpdatePresentationRootTransform : BaseComponentSystem<CharPresentat
 
         if (charPresentation.attachToPresentation != Entity.Null)
             return;
-        
+
         var animState = EntityManager.GetComponentData<PresentationState>(charPresentation.character);
         charPresentation.transform.position = animState.position;
         var CharVR = charPresentation.GetComponent<CharacterVR>();
@@ -75,15 +75,16 @@ public class UpdatePresentationAttachmentTransform : BaseComponentSystem<CharPre
         if (!EntityManager.Exists(charPresentation.attachToPresentation)) {
             GameDebug.LogWarning("Huhb ?");
             return;
-        } else {
-            var refPresentation =
-                EntityManager.GetComponentObject<CharPresentation>(charPresentation.attachToPresentation);
-            charPresentation.transform.parent = refPresentation.itemAttachBone.transform;
-            charPresentation.transform.localPosition = Vector3.zero;
-            charPresentation.transform.localRotation = Quaternion.identity;
-            charPresentation.attached = true;
-            Debug.Log("Attached");
         }
+
+        var refPresentation =
+            EntityManager.GetComponentObject<CharPresentation>(charPresentation.attachToPresentation);
+        charPresentation.transform.parent = refPresentation.itemAttachBone.transform;
+        charPresentation.transform.localPosition = Vector3.zero;
+        charPresentation.transform.localRotation = Quaternion.identity;
+        charPresentation.attached = true;
+        Debug.Log("Attached");
+
 
 //        var refPresentation =
 //            EntityManager.GetComponentObject<CharPresentation>(charPresentation.attachToPresentation);

@@ -221,7 +221,7 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - Color_491FB907: {r: Infinity, g: Infinity, b: Infinity, a: 0}
-    - Color_5A88FE29: {r: 0.4245283, g: 0.17158319, b: 0.10212708, a: 0}
+    - Color_5A88FE29: {r: 0.42352942, g: 0.17254902, b: 0.101960786, a: 0}
     - Color_813A3363: {r: 57.626904, g: 161.90416, b: 174.71014, a: 0}
     - Color_BB37F8F3: {r: 64, g: 33.29964, b: 0, a: 0}
     - Color_F47CF7DA: {r: 0, g: 0, b: 0, a: 0}

@@ -106,6 +106,7 @@ ModelImporter:
     7400012: SphereGrab
     7400014: StickGrab
     9500000: //RootNode
+    11400000: //RootNode
     13700000: renderMesh0
   externalObjects: {}
   materials:
@@ -623,7 +624,7 @@ ModelImporter:
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
     useFileScale: 0
-    previousCalculatedGlobalScale: 1
+    previousCalculatedGlobalScale: 100
     hasPreviousCalculatedGlobalScale: 1
   tangentSpace:
     normalSmoothAngle: 60

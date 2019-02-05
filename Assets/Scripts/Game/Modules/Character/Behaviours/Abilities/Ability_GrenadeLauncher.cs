@@ -168,7 +168,6 @@ class GrenadeLauncher_Update : BaseComponentDataSystem<AbilityControl,Ability_Gr
                             
                         var velocity = startDir*settings.grenadeVelocity;
                         
-                        if (XRSettings.enabled) {
                             var muzzle = character.presentations[1].GetComponent<RobotWeaponA>().muzzle;
                             eyePos = muzzle.transform.position;
                             startDir = muzzle.transform.forward;
@@ -178,8 +177,6 @@ class GrenadeLauncher_Update : BaseComponentDataSystem<AbilityControl,Ability_Gr
                             startDir = math.mul(pitchRot, startDir);
                             
                             velocity = startDir*settings.grenadeVelocity;
-                            Debug.Log($"shot from GLauncher, char is {character.name}. Eye Pos is {eyePos} and direction is {velocity}");
-                        }
                         
 
                         unsafe

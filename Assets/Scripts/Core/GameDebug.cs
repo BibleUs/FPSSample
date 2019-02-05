@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using UnityEngine;
 
 //
@@ -24,6 +25,10 @@ public static class GameDebug
     {
         forwardToDebug = Application.isEditor;
         Application.logMessageReceived += LogCallback;
+
+        if (!Directory.Exists(logfilePath)) {
+            Directory.CreateDirectory(logfilePath);
+        }
 
         // Try creating logName; attempt a number of suffixxes
         string name = "";

@@ -11,6 +11,10 @@ public class SkeletonEditor : Editor
         DrawDefaultInspector();
         var skeletonComponent = (Skeleton) target;
 
+        if (GUILayout.Button("Bind Bones")) {
+            skeletonComponent.StoreBoneData(skeletonComponent.transform);
+        }
+
         if (GUILayout.Button("Goto Import Pose"))
         {   
             // TODO: Is this safe?

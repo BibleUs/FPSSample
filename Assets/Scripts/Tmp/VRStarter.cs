@@ -10,6 +10,12 @@ public class VRStarter : MonoBehaviour {
     public Transform left;
     public Transform right;
     
+    public Transform headsetOffset;
+    public Transform rightControllerOffset;
+    public Transform leftControllerOffset;
+
+    public Transform rightAttach;
+    
     
     public SteamVR.InitializedStates initialized;
 

@@ -101,16 +101,7 @@ class CharacterModuleClient : CharacterModuleShared
         var charRegistry = resourceSystem.GetResourceRegistry<CharacterTypeRegistry>();
         for (var i = 0; i < charRegistry.entries.Count; i++)
         {
-            resourceSystem.LoadSingleAssetResource(charRegistry.entries[i].prefab1P.guid);
             resourceSystem.LoadSingleAssetResource(charRegistry.entries[i].prefabClient.guid);
-            resourceSystem.LoadSingleAssetResource(charRegistry.entries[i].prefabVR.guid);
-        }
-        var itemRegistry = resourceSystem.GetResourceRegistry<ItemRegistry>();
-        for (var i = 0; i < itemRegistry.entries.Count; i++)
-        {
-            resourceSystem.LoadSingleAssetResource(itemRegistry.entries[i].prefab1P.guid);
-            resourceSystem.LoadSingleAssetResource(itemRegistry.entries[i].prefabClient.guid);
-            resourceSystem.LoadSingleAssetResource(itemRegistry.entries[i].prefabVR.guid);
         }
 
 

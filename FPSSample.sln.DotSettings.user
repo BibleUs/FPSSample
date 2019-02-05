@@ -1,5 +1,6 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:Boolean x:Key="/Default/CodeEditing/Unity/IsYamlParsingEnabled/@EntryValue">False</s:Boolean>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=619BA129_002D9695_002DC3BD_002D5212_002D80E0ACCB70D6_002Fd_003AAssets_002Fd_003AScripts_002Fd_003AGame_002Fd_003AMain_002Ff_003AServerGameLoop_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=EBD2F64D_002DE81A_002D957E_002D240B_002DABD961660713_002Fd_003APackages_002Fd_003Acom_002Eunity_002Erender_002Dpipelines_002Ehigh_002Ddefinition_002Fd_003AEditor_002Fd_003AMaterial_002Ff_003AExpandableAreaMaterial_002Ecs/@EntryIndexedValue">ExplicitlyExcluded</s:String>
 	<s:Int64 x:Key="/Default/CodeStyle/Naming/CSharpAutoNaming/AutoNamingCompletedVersion/@EntryValue">2</s:Int64>
 	<s:Boolean x:Key="/Default/CodeStyle/Naming/CSharpAutoNaming/IsNamingAutoDetectionCompleted/@EntryValue">True</s:Boolean>

@@ -51,8 +51,7 @@ public class HandleCharacterSpawn : InitializeComponentGroupSystem<Character, Ha
             var characterTypeAsset = heroTypeAsset.character;
 
             // Create main presentation
-            var charPrefabGUID = (XRSettings.enabled) ? characterTypeAsset.prefabVR.guid :
-                server ? characterTypeAsset.prefabServer.guid : characterTypeAsset.prefabClient.guid;
+            var charPrefabGUID = server ? characterTypeAsset.prefabServer.guid : characterTypeAsset.prefabClient.guid;
             var charPrefab = m_resourceManager.LoadSingleAssetResource(charPrefabGUID) as GameObject;
             var presentationGOE = m_world.Spawn<GameObjectEntity>(charPrefab);
             var charPresentationEntity = presentationGOE.Entity;
@@ -63,6 +62,8 @@ public class HandleCharacterSpawn : InitializeComponentGroupSystem<Character, Ha
             var charPresentation = EntityManager.GetComponentObject<CharPresentation>(charPresentationEntity);
             charPresentation.character = charEntity;
             character.presentations.Add(charPresentation);
+            
+            Debug.Log($"Char Created, {charPresentation.gameObject.name}");
 
 
             // Setup health
@@ -98,26 +99,24 @@ public class HandleCharacterSpawn : InitializeComponentGroupSystem<Character, Ha
                 }
             }
 
+//
+//            // Create items
+//            foreach (var itemEntry in heroTypeAsset.items) {
+//                var itemPrefabGuid = server ? itemEntry.weaponType.prefabServer.guid : itemEntry.weaponType.prefabClient.guid;
+//
+//                if (itemPrefabGuid == null || itemPrefabGuid == "")
+//                    continue;
+//
+//                var itemPrefab = m_resourceManager.LoadSingleAssetResource(itemPrefabGuid) as GameObject;
+//                var itemGOE = m_world.Spawn<GameObjectEntity>(itemPrefab);
+//
+//                var itemCharPresentation = EntityManager.GetComponentObject<CharPresentation>(itemGOE.Entity);
+//                itemCharPresentation.character = charEntity;
+//                itemCharPresentation.attachToPresentation = charPresentationEntity;
+//                character.presentations.Add(itemCharPresentation);
+//            }
 
-            // Create items
-            foreach (var itemEntry in heroTypeAsset.items) {
-                var itemPrefabGuid = (XRSettings.enabled) ? itemEntry.itemType.prefabVR.guid :
-                    server ? itemEntry.itemType.prefabServer.guid : itemEntry.itemType.prefabClient.guid;
-
-                if (itemPrefabGuid == null || itemPrefabGuid == "")
-                    continue;
-
-                var itemPrefab = m_resourceManager.LoadSingleAssetResource(itemPrefabGuid) as GameObject;
-                var itemGOE = m_world.Spawn<GameObjectEntity>(itemPrefab);
-
-                var itemCharPresentation = EntityManager.GetComponentObject<CharPresentation>(itemGOE.Entity);
-                itemCharPresentation.character = charEntity;
-                itemCharPresentation.attachToPresentation = charPresentationEntity;
-                character.presentations.Add(itemCharPresentation);
-            }
-            
-            
-            if (!server) {
+            if (EntityManager.HasComponent<CharacterVR>(charPresentationEntity)) {
                 var charVR = EntityManager.GetComponentObject<CharacterVR>(charPresentationEntity);
                 charVR.Init();
             }
@@ -218,19 +217,6 @@ public class UpdateCharPresentationState : BaseComponentSystem {
             animState.rightControllerRot = userCommand.rightControllerRot;
             animState.leftControllerRot = userCommand.leftControllerRot;
             animState.headsetRot = userCommand.headsetRot;
-            
-
-//
-//            if (XRSettings.enabled) {
-//                var charVR = EntityManager.GetComponentObject<CharacterVR>(character.presentation);
-//                charVR.rightController.localPosition = animState.rightControllerPos;
-//                charVR.leftController.localPosition = animState.leftControllerPos;
-//                charVR.headset.localPosition = animState.headsetPos;
-//
-//                charVR.rightController.localRotation = animState.rightControllerRot;
-//                charVR.leftController.localRotation = animState.leftControllerRot;
-//                charVR.headset.localRotation = animState.headsetRot;
-//            }
 
             // Add small buffer between GroundMove and Stand, to reduce animation noise when there are gaps in between
             // input keypresses
@@ -262,8 +248,10 @@ public class UpdateCharPresentationState : BaseComponentSystem {
 
             // TODO (mogensh) perhaps we should not call presentation, but make system that updates presentation (and reads anim state) 
             // Update presentationstate animstatecontroller
-            var animStateCtrl = EntityManager.GetComponentObject<AnimStateController>(character.presentation);
-            animStateCtrl.UpdatePresentationState(m_world.worldTime, deltaTime);
+            if (EntityManager.HasComponent<AnimStateController>(character.presentation)) {
+                var animStateCtrl = EntityManager.GetComponentObject<AnimStateController>(character.presentation);
+                animStateCtrl.UpdatePresentationState(m_world.worldTime, deltaTime);
+            }
         }
     }
 }

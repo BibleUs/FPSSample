@@ -43,7 +43,8 @@ public class ClientGameWorld
         m_SpectatorCamModule = new SpectatorCamModuleClient(m_GameWorld);
         m_EffectModule = new EffectModuleClient(m_GameWorld, resourceSystem);
         m_ReplicatedEntityModule = new ReplicatedEntityModuleClient(m_GameWorld, resourceSystem);
-        m_ItemModule = new ItemModule(m_GameWorld);
+        m_WeaponsModule = new WeaponsModule(m_GameWorld, resourceSystem, false);
+        m_BonusModule = new BonusModuleClient(m_GameWorld, resourceSystem);
         m_ragdollSystem = new RagdollModule(m_GameWorld);
        
         m_GameModeSystem = m_GameWorld.GetECSWorld().CreateManager<GameModeSystemClient>(m_GameWorld, Game.game.clientFrontend.scoreboardPanel.uiBinding, Game.game.clientFrontend.gameScorePanel);
@@ -82,7 +83,9 @@ public class ClientGameWorld
         m_SpectatorCamModule.Shutdown();
         m_EffectModule.Shutdown();
         m_ReplicatedEntityModule.Shutdown();
-        m_ItemModule.Shutdown();
+        m_WeaponsModule.Shutdown();
+        m_BonusModule.Shutdown();
+        
 
         m_GameWorld.GetECSWorld().DestroyManager(m_GameModeSystem);
         m_GameWorld.GetECSWorld().DestroyManager(m_DestructiblePropSystemClient);
@@ -121,6 +124,7 @@ public class ClientGameWorld
         
         
         // Handle spawn requests
+        m_BonusModule.HandleSpawn();
         m_ProjectileModule.HandleProjectileRequests();   
 
         // Handle spawning  
@@ -133,13 +137,14 @@ public class ClientGameWorld
         m_FanSystem.HandleSpawning();
         m_TranslateScaleSystem.HandleSpawning();
         m_PlayerModule.HandleSpawn();
-        m_ItemModule.HandleSpawn();
+        m_WeaponsModule.HandleSpawn();
         
         // Handle controlled entity changed
         m_PlayerModule.HandleControlledEntityChanged();
         m_CharacterModule.HandleControlledEntityChanged();
         
         // Update movement of scene objects. Projectiles and grenades can also start update as they use collision data from last frame
+        m_BonusModule.Update();
         m_SpinSystem.Update();
         m_moverUpdate.Update();
         m_CharacterModule.Interpolate();
@@ -258,7 +263,7 @@ public class ClientGameWorld
         chatSystem.UpdateLocalTeamIndex(teamId);
 
         
-        m_ItemModule.LateUpdate();
+        m_WeaponsModule.LateUpdate();
 
 
         m_CharacterModule.CameraUpdate();
@@ -483,7 +488,8 @@ public class ClientGameWorld
     readonly SpectatorCamModuleClient m_SpectatorCamModule;
     readonly EffectModuleClient m_EffectModule;
     readonly ReplicatedEntityModuleClient m_ReplicatedEntityModule;
-    readonly ItemModule m_ItemModule;
+    readonly WeaponsModule m_WeaponsModule;
+    readonly BonusModuleClient m_BonusModule;
     
     readonly RagdollModule m_ragdollSystem;
     readonly GameModeSystemClient m_GameModeSystem;
@@ -557,7 +563,8 @@ public class ClientGameLoop : Game.IGameLoop, INetworkCallbacks, INetworkClientC
         Console.AddCommand("runatserver", CmdRunAtServer, "Run command at server", this.GetHashCode());
         Console.AddCommand("respawn", CmdRespawn, "Force a respawn", this.GetHashCode());
         Console.AddCommand("nextchar", CmdNextChar, "Select next character", this.GetHashCode());
-        Console.AddCommand("nextteam", CmdNextTeam, "Select next character", this.GetHashCode());
+        Console.AddCommand("nc", CmdNextChar, "short version of nextchar", this.GetHashCode());
+        Console.AddCommand("nextteam", CmdNextTeam, "Select next team", this.GetHashCode());
         Console.AddCommand("spectator", CmdSpectator, "Select spectator cam", this.GetHashCode());
         Console.AddCommand("matchmake", CmdMatchmake, "matchmake <hostname[:port]/{projectid}>: Find and join a server", this.GetHashCode());
         
